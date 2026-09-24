@@ -3,7 +3,9 @@ Add-Type -AssemblyName System.Drawing
 $brainDir = "C:\Users\User\.gemini\antigravity-ide\brain\a2db0749-3359-4cc2-a557-c50f72cf1f9d\.user_uploaded"
 $outDir = "C:\Users\User\Desktop\jaydaar\assets\images"
 
-function Crop-Cell {
+function Export-CroppedCell {
+    [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
     param(
         [System.Drawing.Bitmap]$sourceImg,
         [int]$x,
@@ -43,28 +45,28 @@ if (Test-Path $grid1Path) {
     $rowH1 = 695.0 / 3.0
 
     # Row 0
-    Crop-Cell $img1 ([int](0 * $colW1)) ([int](0 * $rowH1)) ([int]$colW1) ([int]$rowH1) "lookbook_couple_sarong_red_01.jpg"
-    Crop-Cell $img1 ([int](1 * $colW1)) ([int](0 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_crop_top_marble_01.jpg"
-    Crop-Cell $img1 ([int](2 * $colW1)) ([int](0 * $rowH1)) ([int]$colW1) ([int]$rowH1) "lookbook_women_marble_black_01.jpg"
-    Crop-Cell $img1 ([int](3 * $colW1)) ([int](0 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_men_white_shirt_black_sarong.jpg"
-    Crop-Cell $img1 ([int](4 * $colW1)) ([int](0 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_couple_royal_black_matching.jpg"
-    Crop-Cell $img1 ([int](5 * $colW1)) ([int](0 * $rowH1)) ([int]$colW1) ([int]$rowH1) "lookbook_couple_outdoor_black.jpg"
+    Export-CroppedCell $img1 ([int](0 * $colW1)) ([int](0 * $rowH1)) ([int]$colW1) ([int]$rowH1) "lookbook_couple_sarong_red_01.jpg"
+    Export-CroppedCell $img1 ([int](1 * $colW1)) ([int](0 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_crop_top_marble_01.jpg"
+    Export-CroppedCell $img1 ([int](2 * $colW1)) ([int](0 * $rowH1)) ([int]$colW1) ([int]$rowH1) "lookbook_women_marble_black_01.jpg"
+    Export-CroppedCell $img1 ([int](3 * $colW1)) ([int](0 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_men_white_shirt_black_sarong.jpg"
+    Export-CroppedCell $img1 ([int](4 * $colW1)) ([int](0 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_couple_royal_black_matching.jpg"
+    Export-CroppedCell $img1 ([int](5 * $colW1)) ([int](0 * $rowH1)) ([int]$colW1) ([int]$rowH1) "lookbook_couple_outdoor_black.jpg"
 
     # Row 1
-    Crop-Cell $img1 ([int](0 * $colW1)) ([int](1 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_men_black_shirt_geometric_sarong.jpg"
-    Crop-Cell $img1 ([int](1 * $colW1)) ([int](1 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_women_floral_batik_skirt_set.jpg"
-    Crop-Cell $img1 ([int](2 * $colW1)) ([int](1 * $rowH1)) ([int]$colW1) ([int]$rowH1) "lookbook_portrait_marble_top.jpg"
-    Crop-Cell $img1 ([int](3 * $colW1)) ([int](1 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_men_amber_sunset_batik_sarong.jpg"
-    Crop-Cell $img1 ([int](4 * $colW1)) ([int](1 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_couple_crimson_heritage_set.jpg"
-    Crop-Cell $img1 ([int](5 * $colW1)) ([int](1 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_women_marble_top_wrap_skirt.jpg"
+    Export-CroppedCell $img1 ([int](0 * $colW1)) ([int](1 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_men_black_shirt_geometric_sarong.jpg"
+    Export-CroppedCell $img1 ([int](1 * $colW1)) ([int](1 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_women_floral_batik_skirt_set.jpg"
+    Export-CroppedCell $img1 ([int](2 * $colW1)) ([int](1 * $rowH1)) ([int]$colW1) ([int]$rowH1) "lookbook_portrait_marble_top.jpg"
+    Export-CroppedCell $img1 ([int](3 * $colW1)) ([int](1 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_men_amber_sunset_batik_sarong.jpg"
+    Export-CroppedCell $img1 ([int](4 * $colW1)) ([int](1 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_couple_crimson_heritage_set.jpg"
+    Export-CroppedCell $img1 ([int](5 * $colW1)) ([int](1 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_women_marble_top_wrap_skirt.jpg"
 
     # Row 2
-    Crop-Cell $img1 ([int](0 * $colW1)) ([int](2 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_women_vortex_circles_red_set.jpg"
-    Crop-Cell $img1 ([int](1 * $colW1)) ([int](2 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_couple_vintage_radio_red_set.jpg"
-    Crop-Cell $img1 ([int](2 * $colW1)) ([int](2 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_men_vortex_circles_red_sarong.jpg"
-    Crop-Cell $img1 ([int](3 * $colW1)) ([int](2 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_men_flame_batik_sarong.jpg"
-    Crop-Cell $img1 ([int](4 * $colW1)) ([int](2 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_couple_flame_batik_matching_set.jpg"
-    Crop-Cell $img1 ([int](5 * $colW1)) ([int](2 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_women_flame_batik_sarong_skirt.jpg"
+    Export-CroppedCell $img1 ([int](0 * $colW1)) ([int](2 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_women_vortex_circles_red_set.jpg"
+    Export-CroppedCell $img1 ([int](1 * $colW1)) ([int](2 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_couple_vintage_radio_red_set.jpg"
+    Export-CroppedCell $img1 ([int](2 * $colW1)) ([int](2 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_men_vortex_circles_red_sarong.jpg"
+    Export-CroppedCell $img1 ([int](3 * $colW1)) ([int](2 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_men_flame_batik_sarong.jpg"
+    Export-CroppedCell $img1 ([int](4 * $colW1)) ([int](2 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_couple_flame_batik_matching_set.jpg"
+    Export-CroppedCell $img1 ([int](5 * $colW1)) ([int](2 * $rowH1)) ([int]$colW1) ([int]$rowH1) "product_women_flame_batik_sarong_skirt.jpg"
 
     $img1.Dispose()
 }
@@ -77,25 +79,25 @@ if (Test-Path $grid2Path) {
     $rowH2 = 687.0 / 3.0
 
     # Row 0
-    Crop-Cell $img2 ([int](0 * $colW2)) ([int](0 * $rowH2)) ([int]$colW2) ([int]$rowH2) "product_women_lotus_batik_saree_close.jpg"
-    Crop-Cell $img2 ([int](1 * $colW2)) ([int](0 * $rowH2)) ([int]$colW2) ([int]$rowH2) "product_women_lotus_kandyan_saree_full.jpg"
-    Crop-Cell $img2 ([int](2 * $colW2)) ([int](0 * $rowH2)) ([int]$colW2) ([int]$rowH2) "lookbook_lotus_saree_portrait.jpg"
-    Crop-Cell $img2 ([int](3 * $colW2)) ([int](0 * $rowH2)) ([int]$colW2) ([int]$rowH2) "product_women_embroidered_black_tunic_full.jpg"
-    Crop-Cell $img2 ([int](4 * $colW2)) ([int](0 * $rowH2)) ([int]$colW2) ([int]$rowH2) "product_women_embroidered_black_shirt.jpg"
-    Crop-Cell $img2 ([int](5 * $colW2)) ([int](0 * $rowH2)) ([int]$colW2) ([int]$rowH2) "lookbook_black_embroidered_dress.jpg"
+    Export-CroppedCell $img2 ([int](0 * $colW2)) ([int](0 * $rowH2)) ([int]$colW2) ([int]$rowH2) "product_women_lotus_batik_saree_close.jpg"
+    Export-CroppedCell $img2 ([int](1 * $colW2)) ([int](0 * $rowH2)) ([int]$colW2) ([int]$rowH2) "product_women_lotus_kandyan_saree_full.jpg"
+    Export-CroppedCell $img2 ([int](2 * $colW2)) ([int](0 * $rowH2)) ([int]$colW2) ([int]$rowH2) "lookbook_lotus_saree_portrait.jpg"
+    Export-CroppedCell $img2 ([int](3 * $colW2)) ([int](0 * $rowH2)) ([int]$colW2) ([int]$rowH2) "product_women_embroidered_black_tunic_full.jpg"
+    Export-CroppedCell $img2 ([int](4 * $colW2)) ([int](0 * $rowH2)) ([int]$colW2) ([int]$rowH2) "product_women_embroidered_black_shirt.jpg"
+    Export-CroppedCell $img2 ([int](5 * $colW2)) ([int](0 * $rowH2)) ([int]$colW2) ([int]$rowH2) "lookbook_black_embroidered_dress.jpg"
 
     # Row 1
-    Crop-Cell $img2 ([int](0 * $colW2)) ([int](1 * $rowH2)) ([int]$colW2) ([int]$rowH2) "product_women_crimson_black_batik_dress.jpg"
-    Crop-Cell $img2 ([int](1 * $colW2)) ([int](1 * $rowH2)) ([int]$colW2) ([int]$rowH2) "banner_jaydaar_script_logo.jpg"
-    Crop-Cell $img2 ([int](2 * $colW2)) ([int](1 * $rowH2)) ([int]$colW2) ([int]$rowH2) "lookbook_crimson_dress_indoor.jpg"
-    Crop-Cell $img2 ([int](3 * $colW2)) ([int](1 * $rowH2)) ([int]$colW2) ([int]$rowH2) "product_women_crimson_draped_skirt.jpg"
-    Crop-Cell $img2 ([int](4 * $colW2)) ([int](1 * $rowH2)) ([int]$colW2) ([int]$rowH2) "detail_flame_batik_fabric.jpg"
-    Crop-Cell $img2 ([int](5 * $colW2)) ([int](1 * $rowH2)) ([int]$colW2) ([int]$rowH2) "lookbook_outdoor_greenery_marble.jpg"
+    Export-CroppedCell $img2 ([int](0 * $colW2)) ([int](1 * $rowH2)) ([int]$colW2) ([int]$rowH2) "product_women_crimson_black_batik_dress.jpg"
+    Export-CroppedCell $img2 ([int](1 * $colW2)) ([int](1 * $rowH2)) ([int]$colW2) ([int]$rowH2) "banner_jaydaar_script_logo.jpg"
+    Export-CroppedCell $img2 ([int](2 * $colW2)) ([int](1 * $rowH2)) ([int]$colW2) ([int]$rowH2) "lookbook_crimson_dress_indoor.jpg"
+    Export-CroppedCell $img2 ([int](3 * $colW2)) ([int](1 * $rowH2)) ([int]$colW2) ([int]$rowH2) "product_women_crimson_draped_skirt.jpg"
+    Export-CroppedCell $img2 ([int](4 * $colW2)) ([int](1 * $rowH2)) ([int]$colW2) ([int]$rowH2) "detail_flame_batik_fabric.jpg"
+    Export-CroppedCell $img2 ([int](5 * $colW2)) ([int](1 * $rowH2)) ([int]$colW2) ([int]$rowH2) "lookbook_outdoor_greenery_marble.jpg"
 
     # Row 2
-    Crop-Cell $img2 ([int](3 * $colW2)) ([int](2 * $rowH2)) ([int]$colW2) ([int]$rowH2) "product_couple_black_crimson_seated.jpg"
-    Crop-Cell $img2 ([int](4 * $colW2)) ([int](2 * $rowH2)) ([int]$colW2) ([int]$rowH2) "product_women_balcony_red_sarong.jpg"
-    Crop-Cell $img2 ([int](5 * $colW2)) ([int](2 * $rowH2)) ([int]$colW2) ([int]$rowH2) "lookbook_couple_intimate_black_white.jpg"
+    Export-CroppedCell $img2 ([int](3 * $colW2)) ([int](2 * $rowH2)) ([int]$colW2) ([int]$rowH2) "product_couple_black_crimson_seated.jpg"
+    Export-CroppedCell $img2 ([int](4 * $colW2)) ([int](2 * $rowH2)) ([int]$colW2) ([int]$rowH2) "product_women_balcony_red_sarong.jpg"
+    Export-CroppedCell $img2 ([int](5 * $colW2)) ([int](2 * $rowH2)) ([int]$colW2) ([int]$rowH2) "lookbook_couple_intimate_black_white.jpg"
 
     $img2.Dispose()
 }
@@ -108,20 +110,20 @@ if (Test-Path $grid3Path) {
     $rowH3 = 463.0 / 2.0
 
     # Row 0
-    Crop-Cell $img3 ([int](0 * $colW3)) ([int](0 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_sage_co_ord_full.jpg"
-    Crop-Cell $img3 ([int](1 * $colW3)) ([int](0 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_sage_co_ord_detail.jpg"
-    Crop-Cell $img3 ([int](2 * $colW3)) ([int](0 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_sage_co_ord_pose.jpg"
-    Crop-Cell $img3 ([int](3 * $colW3)) ([int](0 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_crimson_floral_saree_01.jpg"
-    Crop-Cell $img3 ([int](4 * $colW3)) ([int](0 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_crimson_floral_saree_02.jpg"
-    Crop-Cell $img3 ([int](5 * $colW3)) ([int](0 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_crimson_floral_saree_03.jpg"
+    Export-CroppedCell $img3 ([int](0 * $colW3)) ([int](0 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_sage_co_ord_full.jpg"
+    Export-CroppedCell $img3 ([int](1 * $colW3)) ([int](0 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_sage_co_ord_detail.jpg"
+    Export-CroppedCell $img3 ([int](2 * $colW3)) ([int](0 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_sage_co_ord_pose.jpg"
+    Export-CroppedCell $img3 ([int](3 * $colW3)) ([int](0 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_crimson_floral_saree_01.jpg"
+    Export-CroppedCell $img3 ([int](4 * $colW3)) ([int](0 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_crimson_floral_saree_02.jpg"
+    Export-CroppedCell $img3 ([int](5 * $colW3)) ([int](0 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_crimson_floral_saree_03.jpg"
 
     # Row 1
-    Crop-Cell $img3 ([int](0 * $colW3)) ([int](1 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_amber_flare_dress_01.jpg"
-    Crop-Cell $img3 ([int](1 * $colW3)) ([int](1 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_amber_flare_dress_02.jpg"
-    Crop-Cell $img3 ([int](2 * $colW3)) ([int](1 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_amber_flare_dress_03.jpg"
-    Crop-Cell $img3 ([int](3 * $colW3)) ([int](1 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_emerald_tunic_palazzo_back.jpg"
-    Crop-Cell $img3 ([int](4 * $colW3)) ([int](1 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_emerald_tunic_palazzo_front.jpg"
-    Crop-Cell $img3 ([int](5 * $colW3)) ([int](1 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_emerald_tunic_palazzo_side.jpg"
+    Export-CroppedCell $img3 ([int](0 * $colW3)) ([int](1 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_amber_flare_dress_01.jpg"
+    Export-CroppedCell $img3 ([int](1 * $colW3)) ([int](1 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_amber_flare_dress_02.jpg"
+    Export-CroppedCell $img3 ([int](2 * $colW3)) ([int](1 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_amber_flare_dress_03.jpg"
+    Export-CroppedCell $img3 ([int](3 * $colW3)) ([int](1 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_emerald_tunic_palazzo_back.jpg"
+    Export-CroppedCell $img3 ([int](4 * $colW3)) ([int](1 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_emerald_tunic_palazzo_front.jpg"
+    Export-CroppedCell $img3 ([int](5 * $colW3)) ([int](1 * $rowH3)) ([int]$colW3) ([int]$rowH3) "product_studio_emerald_tunic_palazzo_side.jpg"
 
     $img3.Dispose()
 }

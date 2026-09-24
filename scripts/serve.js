@@ -1,6 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const zlib = require('zlib');
 
 const PORT = 3000;
 const MIME_TYPES = {
@@ -54,13 +55,26 @@ const server = http.createServer((req, res) => {
       });
       file.pipe(res);
     } else {
-      res.writeHead(200, {
-        'Content-Length': total,
-        'Content-Type': contentType,
-        'Accept-Ranges': 'bytes',
-        'Cache-Control': 'no-cache'
-      });
-      fs.createReadStream(filePath).pipe(res);
+      const acceptEncoding = req.headers['accept-encoding'] || '';
+      const isText = (ext === '.html' || ext === '.css' || ext === '.js' || ext === '.json');
+
+      if (isText && acceptEncoding.includes('gzip')) {
+        res.writeHead(200, {
+          'Content-Type': contentType,
+          'Content-Encoding': 'gzip',
+          'Vary': 'Accept-Encoding',
+          'Cache-Control': 'no-cache'
+        });
+        fs.createReadStream(filePath).pipe(zlib.createGzip()).pipe(res);
+      } else {
+        res.writeHead(200, {
+          'Content-Length': total,
+          'Content-Type': contentType,
+          'Accept-Ranges': 'bytes',
+          'Cache-Control': 'no-cache'
+        });
+        fs.createReadStream(filePath).pipe(res);
+      }
     }
   });
 });

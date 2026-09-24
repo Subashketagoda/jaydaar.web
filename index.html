@@ -147,6 +147,12 @@
         <a href="https://wa.me/94771234567?text=Hello%20Jaydaar!%20I%20would%20like%20to%20inquire%20about%20your%20batik%20collections." target="_blank" class="btn-minimal-ghost">
           Inquire on WhatsApp
         </a>
+        <div class="hero-scroll-cue" onclick="document.getElementById('about').scrollIntoView({behavior: 'smooth'})">
+          <div class="scroll-mouse-icon">
+            <span class="scroll-mouse-wheel"></span>
+          </div>
+          <span class="scroll-cue-label">EXPLORE ARCHIVE</span>
+        </div>
       </div>
     </div>
   </section>
@@ -685,6 +691,24 @@
       </div>
     </div>
   </div>
+
+  <!-- Editorial Luxury Cursor (Desktop) -->
+  <div class="luxury-cursor-dot" id="cursorDot"></div>
+  <div class="luxury-cursor-ring" id="cursorRing"><span class="cursor-text" id="cursorText"></span></div>
+
+  <!-- Floating Atelier Concierge Widget -->
+  <aside class="floating-concierge" aria-label="Atelier Concierge">
+    <a href="https://wa.me/94771234567?text=Hello%20Jaydaar!%20I%20am%20exploring%20your%20archive%20and%20would%20like%20to%20consult%20an%20atelier%20stylist." target="_blank" class="concierge-trigger" id="conciergeTrigger" aria-label="Direct WhatsApp Concierge">
+      <div class="concierge-badge">
+        <span class="concierge-pulse"></span>
+        <span class="concierge-status">Atelier Online</span>
+      </div>
+      <div class="concierge-btn-inner">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.634.075-1.045-.052-.777-.238-1.748-.828-2.545-1.626-.811-.813-1.4-1.79-1.628-2.569-.117-.402-.09-.721-.044-1.032.049-.333.418-1.026.823-1.17.159-.057.34-.055.495.031.144.081.82 1.488.94 1.706.075.135.087.27.017.405-.125.241-.303.411-.476.584-.093.093-.191.196-.08.388.243.42 1.018 1.489 1.956 1.968.188.096.29.006.381-.088.169-.175.337-.354.577-.478.135-.07.27-.058.405.017.218.12 1.625.796 1.706.94.086.155.088.336.031.495z"/></svg>
+        <span>Consult Stylist</span>
+      </div>
+    </a>
+  </aside>
 
   <!-- Scripts -->
   <script src="js/products.js"></script>

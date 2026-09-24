@@ -255,6 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <article class="editorial-prod-card" data-product-id="${product.id}">
           <div class="prod-visual-box" onclick="window.JaydaarApp.openProductModal('${product.id}')">
             ${product.tag ? `<span class="prod-tag-pill">${product.tag}</span>` : ''}
+            <div class="prod-quick-action-pill">Quick View &bull; Inquire</div>
             <img src="${mainImg}" alt="${product.name}" class="prod-visual-img main-view" loading="lazy">
             <img src="${hoverImg}" alt="${product.name}" class="prod-visual-img hover-view" loading="lazy">
           </div>
@@ -334,6 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!reelsGrid || !JAYDAAR_DATA.reels) return;
     reelsGrid.innerHTML = JAYDAAR_DATA.reels.map((reel, idx) => `
       <div class="reel-card" data-idx="${idx}">
+        <div class="reel-live-badge"><span class="reel-live-dot"></span> LIVE MOTION</div>
         <video class="reel-video" loop muted playsinline preload="none" poster="${reel.poster}">
           <source src="${reel.video}" type="video/mp4">
         </video>
@@ -558,6 +560,51 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
     }
   }
 
+  // 9. Luxury Cursor Engine (Desktop)
+  function initLuxuryCursor() {
+    const dot = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    const text = document.getElementById('cursorText');
+    if (!dot || !ring || window.matchMedia('(pointer: coarse)').matches) return;
+
+    let mouseX = -100, mouseY = -100;
+    let ringX = -100, ringY = -100;
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+    });
+
+    function renderCursor() {
+      ringX += (mouseX - ringX) * 0.16;
+      ringY += (mouseY - ringY) * 0.16;
+      ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+      requestAnimationFrame(renderCursor);
+    }
+    requestAnimationFrame(renderCursor);
+
+    function attachCursorHover() {
+      document.querySelectorAll('a, button, input, select, textarea, .tab-btn').forEach(el => {
+        el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+        el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+      });
+
+      document.querySelectorAll('.prod-visual-box, .lookbook-tile, .reel-card').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          document.body.classList.add('cursor-explore');
+          if (text) text.textContent = 'EXPLORE';
+        });
+        el.addEventListener('mouseleave', () => {
+          document.body.classList.remove('cursor-explore');
+          if (text) text.textContent = '';
+        });
+      });
+    }
+
+    attachCursorHover();
+  }
+
   // Initial Boot
   renderTabs();
   renderProductsGrid();
@@ -565,4 +612,5 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
   renderReels();
   renderSocialMedia();
   initSmartVideoPlayback();
+  initLuxuryCursor();
 });

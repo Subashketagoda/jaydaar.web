@@ -16,15 +16,48 @@ document.addEventListener('DOMContentLoaded', () => {
     currentLightboxIndex: 0
   };
 
-  // 1. Loading Experience (Preloader)
+  // 1. Haute Couture Loading Experience (Atelier Preloader Sequence)
   const preloader = document.getElementById('preloader');
+  const preloaderCount = document.getElementById('preloaderCount');
+  const preloaderFill = document.getElementById('preloaderFill');
+  const preloaderStatus = document.getElementById('preloaderStatus');
+
   if (preloader) {
-    setTimeout(() => {
-      preloader.classList.add('fade-out');
-      setTimeout(() => {
-        preloader.style.display = 'none';
-      }, 650);
-    }, 1200);
+    let currentPct = 0;
+    const stages = [
+      { max: 28, text: 'GATHERING ATELIER ARCHIVE...' },
+      { max: 62, text: 'WEAVING WAX-RESIST SILHOUETTES...' },
+      { max: 88, text: 'SYNCHRONIZING CAMPAIGN CINEMA...' },
+      { max: 100, text: 'WELCOME TO JAYDAAR' }
+    ];
+
+    const interval = setInterval(() => {
+      // Elegant non-linear luxury counter progression
+      const increment = Math.floor(Math.random() * 3) + 2;
+      currentPct = Math.min(currentPct + increment, 100);
+
+      if (preloaderCount) {
+        preloaderCount.textContent = `${currentPct.toString().padStart(2, '0')}%`;
+      }
+      if (preloaderFill) {
+        preloaderFill.style.width = `${currentPct}%`;
+      }
+
+      if (preloaderStatus) {
+        const stage = stages.find(s => currentPct <= s.max) || stages[stages.length - 1];
+        preloaderStatus.textContent = stage.text;
+      }
+
+      if (currentPct >= 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          preloader.classList.add('fade-out');
+          setTimeout(() => {
+            preloader.style.display = 'none';
+          }, 950);
+        }, 220);
+      }
+    }, 32);
   }
 
   // DOM Elements

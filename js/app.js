@@ -23,6 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const preloaderStatus = document.getElementById('preloaderStatus');
 
   if (preloader) {
+    const preloaderVideo = preloader.querySelector('video');
+    if (preloaderVideo) {
+      preloaderVideo.muted = true;
+      preloaderVideo.play().catch(() => {});
+    }
+
     let currentPct = 0;
     const stages = [
       { max: 28, text: 'GATHERING ATELIER ARCHIVE...' },
@@ -54,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
           preloader.classList.add('fade-out');
           setTimeout(() => {
             preloader.style.display = 'none';
+            if (preloaderVideo) preloaderVideo.pause();
           }, 950);
         }, 220);
       }

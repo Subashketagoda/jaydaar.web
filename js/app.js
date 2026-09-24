@@ -70,9 +70,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
           preloader.classList.add('fade-out');
-          // Trigger all videos to start playing immediately as curtains reveal site
-          if (typeof playAllVideos === 'function') {
-            playAllVideos();
+          // Start playing hero video seamlessly as curtains reveal site
+          const heroVid = document.getElementById('heroBgVideo');
+          if (heroVid && typeof playVideoSafely === 'function') {
+            playVideoSafely(heroVid);
           }
           setTimeout(() => {
             preloader.style.display = 'none';
@@ -347,6 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 6. Cinema in Motion: Render Reels Showcase (Continuous Autoplay Cinema)
+  // 6. Cinema in Motion: Render Reels Showcase (Smooth Lazy Streaming Cinema)
   const reelsGrid = document.getElementById('reelsGrid');
 
   function renderReels() {
@@ -354,7 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reelsGrid.innerHTML = JAYDAAR_DATA.reels.map((reel, idx) => `
       <div class="reel-card" data-idx="${idx}">
         <div class="reel-live-badge"><span class="reel-live-dot"></span> LIVE MOTION</div>
-        <video class="reel-video" autoplay loop muted playsinline webkit-playsinline preload="auto" poster="${reel.poster}">
+        <video class="reel-video" loop muted playsinline webkit-playsinline preload="none" poster="${reel.poster}">
           <source src="${reel.video}" type="video/mp4">
         </video>
 
@@ -375,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!socialPreviewGrid || !JAYDAAR_DATA.socialPosts) return;
     socialPreviewGrid.innerHTML = JAYDAAR_DATA.socialPosts.map(post => `
       <div class="social-tile" onclick="window.open('${post.url}', '_blank')">
-        <video class="social-video" autoplay loop muted playsinline webkit-playsinline preload="auto" poster="${post.poster}">
+        <video class="social-video" loop muted playsinline webkit-playsinline preload="none" poster="${post.poster}">
           <source src="${post.video}" type="video/mp4">
         </video>
         <div class="social-tile-overlay">
@@ -544,86 +546,55 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
     }
   };
 
-  // Universal Video Engine: Ensure EVERY video autoplays smoothly across all devices
-  function playAllVideos() {
-    const allVideos = document.querySelectorAll('video');
-    allVideos.forEach(vid => {
-      // Skip preloader video if preloader is completed
-      if (preloader && preloader.style.display === 'none' && vid.classList.contains('preloader-bg-video')) {
-        return;
-      }
+  // High-Performance Priority Video Engine: Stream & Play only active videos
+  function playVideoSafely(vid) {
+    if (!vid) return;
+    vid.muted = true;
+    vid.defaultMuted = true;
+    vid.playsInline = true;
+    vid.setAttribute('muted', '');
+    vid.setAttribute('playsinline', '');
+    vid.setAttribute('webkit-playsinline', '');
+    vid.setAttribute('loop', '');
+    const p = vid.play();
+    if (p !== undefined) p.catch(() => {});
+  }
 
-      vid.muted = true;
-      vid.defaultMuted = true;
-      vid.playsInline = true;
-      vid.setAttribute('muted', '');
-      vid.setAttribute('playsinline', '');
-      vid.setAttribute('webkit-playsinline', '');
-      vid.setAttribute('autoplay', '');
-      vid.setAttribute('loop', '');
-
-      const p = vid.play();
-      if (p !== undefined) {
-        p.catch(() => {
-          // Will be unlocked by global interaction listeners
-        });
-      }
-    });
+  function pauseVideoSafely(vid) {
+    if (!vid || vid.id === 'heroBgVideo') return;
+    try { vid.pause(); } catch(e) {}
   }
 
   function initSmartVideoPlayback() {
-    // 1. Play all videos immediately
-    playAllVideos();
+    // 1. Play hero video immediately
+    const heroVid = document.getElementById('heroBgVideo');
+    if (heroVid) playVideoSafely(heroVid);
 
-    // 2. Play video as soon as its metadata / first frame is ready
-    document.querySelectorAll('video').forEach(vid => {
-      vid.addEventListener('loadeddata', () => {
-        vid.muted = true;
-        vid.play().catch(() => {});
-      });
-      vid.addEventListener('canplay', () => {
-        vid.muted = true;
-        vid.play().catch(() => {});
-      });
-    });
-
-    // 3. Fallback gesture unlock for strict Safari/iOS & Android Chrome policies
-    const unlockHandler = () => {
-      playAllVideos();
+    // 2. Fallback gesture unlock for hero video on strict mobile browsers
+    const unlockVisible = () => {
+      if (heroVid && heroVid.paused) playVideoSafely(heroVid);
     };
-    ['touchstart', 'touchend', 'scroll', 'click', 'pointerdown', 'keydown'].forEach(evt => {
-      window.addEventListener(evt, unlockHandler, { once: true, passive: true });
+    ['touchstart', 'touchend', 'scroll', 'click', 'pointerdown'].forEach(evt => {
+      window.addEventListener(evt, unlockVisible, { once: true, passive: true });
     });
 
-    // 4. Viewport Intersection: Guarantee continuous active playback when scrolling into view
+    // 3. Viewport Intersection: Stream & Play ONLY when scrolled within 180px of screen
     if ('IntersectionObserver' in window) {
       const videoObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           const vid = entry.target;
           if (entry.isIntersecting) {
-            vid.muted = true;
-            vid.play().catch(() => {});
+            playVideoSafely(vid);
+          } else {
+            pauseVideoSafely(vid);
           }
         });
-      }, { rootMargin: '250px 0px 250px 0px', threshold: 0.01 });
+      }, { rootMargin: '180px 0px 180px 0px', threshold: 0.05 });
 
-      document.querySelectorAll('video').forEach(vid => {
-        if (!vid.classList.contains('preloader-bg-video')) {
-          videoObserver.observe(vid);
-        }
+      document.querySelectorAll('.reel-video, .social-video, .featured-visual-video').forEach(vid => {
+        videoObserver.observe(vid);
       });
     }
-
-    // 5. Watchdog self-healing interval to keep all visible videos continuously playing
-    setInterval(() => {
-      document.querySelectorAll('video').forEach(vid => {
-        if (vid.classList.contains('preloader-bg-video')) return;
-        if (vid.paused && vid.readyState >= 2) {
-          vid.muted = true;
-          vid.play().catch(() => {});
-        }
-      });
-    }, 2000);
   }
 
   // 9. Luxury Cursor Engine (Desktop)

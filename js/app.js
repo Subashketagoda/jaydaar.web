@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     currentLightboxIndex: 0
   };
 
-  // 1. Haute Couture Loading Experience (Atelier Preloader Sequence)
+  // 1. Haute Couture Loading Experience (Atelier Preloader Sequence: Exactly 2.5s)
   const preloader = document.getElementById('preloader');
   const preloaderCount = document.getElementById('preloaderCount');
   const preloaderFill = document.getElementById('preloaderFill');
@@ -26,21 +26,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const preloaderVideo = preloader.querySelector('video');
     if (preloaderVideo) {
       preloaderVideo.muted = true;
+      preloaderVideo.defaultMuted = true;
+      preloaderVideo.playsInline = true;
       preloaderVideo.play().catch(() => {});
     }
 
-    let currentPct = 0;
+    const PRELOADER_DURATION_MS = 2500; // Exact 2.5 seconds
+    const startTime = performance.now();
     const stages = [
-      { max: 30, text: 'GATHERING ATELIER ARCHIVE...' },
-      { max: 65, text: 'WEAVING WAX-RESIST SILHOUETTES...' },
-      { max: 90, text: 'SYNCHRONIZING CAMPAIGN CINEMA...' },
+      { max: 28, text: 'GATHERING ATELIER ARCHIVE...' },
+      { max: 62, text: 'WEAVING WAX-RESIST SILHOUETTES...' },
+      { max: 88, text: 'SYNCHRONIZING CAMPAIGN CINEMA...' },
       { max: 100, text: 'WELCOME TO JAYDAAR' }
     ];
 
-    const interval = setInterval(() => {
-      // Rapid, silky luxury progress
-      const increment = Math.floor(Math.random() * 10) + 16;
-      currentPct = Math.min(currentPct + increment, 100);
+    let preloaderCompleted = false;
+
+    function stepPreloader(timestamp) {
+      if (preloaderCompleted) return;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / PRELOADER_DURATION_MS, 1.0);
+      const currentPct = Math.min(100, Math.floor(progress * 100));
 
       if (preloaderCount) {
         preloaderCount.textContent = `${currentPct.toString().padStart(2, '0')}%`;
@@ -54,17 +60,29 @@ document.addEventListener('DOMContentLoaded', () => {
         preloaderStatus.textContent = stage.text;
       }
 
-      if (currentPct >= 100) {
-        clearInterval(interval);
+      if (progress < 1.0) {
+        requestAnimationFrame(stepPreloader);
+      } else {
+        preloaderCompleted = true;
+        if (preloaderCount) preloaderCount.textContent = '100%';
+        if (preloaderFill) preloaderFill.style.width = '100%';
+        if (preloaderStatus) preloaderStatus.textContent = 'WELCOME TO JAYDAAR';
+
         setTimeout(() => {
           preloader.classList.add('fade-out');
+          // Trigger all videos to start playing immediately as curtains reveal site
+          if (typeof playAllVideos === 'function') {
+            playAllVideos();
+          }
           setTimeout(() => {
             preloader.style.display = 'none';
             if (preloaderVideo) preloaderVideo.pause();
           }, 450);
-        }, 80);
+        }, 120);
       }
-    }, 18);
+    }
+
+    requestAnimationFrame(stepPreloader);
   }
 
   // DOM Elements
@@ -328,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 6. Cinema in Motion: Render Reels Showcase (Continuous Autoplay, No Play Button)
+  // 6. Cinema in Motion: Render Reels Showcase (Continuous Autoplay Cinema)
   const reelsGrid = document.getElementById('reelsGrid');
 
   function renderReels() {
@@ -336,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reelsGrid.innerHTML = JAYDAAR_DATA.reels.map((reel, idx) => `
       <div class="reel-card" data-idx="${idx}">
         <div class="reel-live-badge"><span class="reel-live-dot"></span> LIVE MOTION</div>
-        <video class="reel-video" loop muted playsinline preload="none" poster="${reel.poster}">
+        <video class="reel-video" autoplay loop muted playsinline webkit-playsinline preload="auto" poster="${reel.poster}">
           <source src="${reel.video}" type="video/mp4">
         </video>
 
@@ -357,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!socialPreviewGrid || !JAYDAAR_DATA.socialPosts) return;
     socialPreviewGrid.innerHTML = JAYDAAR_DATA.socialPosts.map(post => `
       <div class="social-tile" onclick="window.open('${post.url}', '_blank')">
-        <video class="social-video" loop muted playsinline preload="none" poster="${post.poster}">
+        <video class="social-video" autoplay loop muted playsinline webkit-playsinline preload="auto" poster="${post.poster}">
           <source src="${post.video}" type="video/mp4">
         </video>
         <div class="social-tile-overlay">
@@ -526,21 +544,58 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
     }
   };
 
-  // Smart Autoplay: Play Hero immediately; lazy-play offscreen videos via IntersectionObserver
-  function initSmartVideoPlayback() {
-    const heroVid = document.getElementById('heroBgVideo');
-    if (heroVid) {
-      heroVid.muted = true;
-      heroVid.play().catch(() => {
-        const unlockHero = () => {
-          heroVid.play().catch(() => {});
-        };
-        window.addEventListener('touchstart', unlockHero, { once: true, passive: true });
-        window.addEventListener('scroll', unlockHero, { once: true, passive: true });
-        window.addEventListener('click', unlockHero, { once: true });
-      });
-    }
+  // Universal Video Engine: Ensure EVERY video autoplays smoothly across all devices
+  function playAllVideos() {
+    const allVideos = document.querySelectorAll('video');
+    allVideos.forEach(vid => {
+      // Skip preloader video if preloader is completed
+      if (preloader && preloader.style.display === 'none' && vid.classList.contains('preloader-bg-video')) {
+        return;
+      }
 
+      vid.muted = true;
+      vid.defaultMuted = true;
+      vid.playsInline = true;
+      vid.setAttribute('muted', '');
+      vid.setAttribute('playsinline', '');
+      vid.setAttribute('webkit-playsinline', '');
+      vid.setAttribute('autoplay', '');
+      vid.setAttribute('loop', '');
+
+      const p = vid.play();
+      if (p !== undefined) {
+        p.catch(() => {
+          // Will be unlocked by global interaction listeners
+        });
+      }
+    });
+  }
+
+  function initSmartVideoPlayback() {
+    // 1. Play all videos immediately
+    playAllVideos();
+
+    // 2. Play video as soon as its metadata / first frame is ready
+    document.querySelectorAll('video').forEach(vid => {
+      vid.addEventListener('loadeddata', () => {
+        vid.muted = true;
+        vid.play().catch(() => {});
+      });
+      vid.addEventListener('canplay', () => {
+        vid.muted = true;
+        vid.play().catch(() => {});
+      });
+    });
+
+    // 3. Fallback gesture unlock for strict Safari/iOS & Android Chrome policies
+    const unlockHandler = () => {
+      playAllVideos();
+    };
+    ['touchstart', 'touchend', 'scroll', 'click', 'pointerdown', 'keydown'].forEach(evt => {
+      window.addEventListener(evt, unlockHandler, { once: true, passive: true });
+    });
+
+    // 4. Viewport Intersection: Guarantee continuous active playback when scrolling into view
     if ('IntersectionObserver' in window) {
       const videoObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -548,16 +603,27 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
           if (entry.isIntersecting) {
             vid.muted = true;
             vid.play().catch(() => {});
-          } else {
-            vid.pause();
           }
         });
-      }, { rootMargin: '160px 0px 160px 0px', threshold: 0.05 });
+      }, { rootMargin: '250px 0px 250px 0px', threshold: 0.01 });
 
-      document.querySelectorAll('.reel-video, .social-video, .featured-visual-video').forEach(vid => {
-        videoObserver.observe(vid);
+      document.querySelectorAll('video').forEach(vid => {
+        if (!vid.classList.contains('preloader-bg-video')) {
+          videoObserver.observe(vid);
+        }
       });
     }
+
+    // 5. Watchdog self-healing interval to keep all visible videos continuously playing
+    setInterval(() => {
+      document.querySelectorAll('video').forEach(vid => {
+        if (vid.classList.contains('preloader-bg-video')) return;
+        if (vid.paused && vid.readyState >= 2) {
+          vid.muted = true;
+          vid.play().catch(() => {});
+        }
+      });
+    }, 2000);
   }
 
   // 9. Luxury Cursor Engine (Desktop)

@@ -268,25 +268,29 @@ const JAYDAAR_DATA = {
   socialPosts: [
     {
       id: "sp-01",
-      image: "assets/images/jaydaar_flame_couple.jpg",
+      video: "assets/videos/jaydaar_campaign_1.mp4",
+      poster: "assets/images/jaydaar_flame_couple.jpg",
       caption: "Synchronized flame batik couple matching ensemble. Handcrafted wax-resist in Galle.",
       url: "https://instagram.com/jaydaar_"
     },
     {
       id: "sp-02",
-      image: "assets/images/jaydaar_sage_coord.jpg",
-      caption: "Muted botanical sage tailoring: Asymmetric waistcoat vest & wide-leg trouser.",
+      video: "assets/videos/jaydaar_wrap_top_palazzo.mp4",
+      poster: "assets/images/jaydaar_sage_coord.jpg",
+      caption: "Modern wrap crop top & pleated sarong fall in motion.",
       url: "https://instagram.com/jaydaar_"
     },
     {
       id: "sp-03",
-      image: "assets/images/hero_editorial.jpg",
+      video: "assets/videos/jaydaar_campaign_2.mp4",
+      poster: "assets/images/hero_editorial.jpg",
       caption: "Timeless Sri Lankan heritage captured on colonial estate grounds.",
       url: "https://instagram.com/jaydaar_"
     },
     {
       id: "sp-04",
-      image: "assets/images/product_men_flame_batik_sarong.jpg",
+      video: "assets/videos/jaydaar_campaign_4.mp4",
+      poster: "assets/images/product_men_flame_batik_sarong.jpg",
       caption: "The iconic hand-drawn flame sarong on pure cambric cotton.",
       url: "https://instagram.com/jaydaar_"
     }

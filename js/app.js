@@ -31,15 +31,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentPct = 0;
     const stages = [
-      { max: 28, text: 'GATHERING ATELIER ARCHIVE...' },
-      { max: 62, text: 'WEAVING WAX-RESIST SILHOUETTES...' },
-      { max: 88, text: 'SYNCHRONIZING CAMPAIGN CINEMA...' },
+      { max: 30, text: 'GATHERING ATELIER ARCHIVE...' },
+      { max: 65, text: 'WEAVING WAX-RESIST SILHOUETTES...' },
+      { max: 90, text: 'SYNCHRONIZING CAMPAIGN CINEMA...' },
       { max: 100, text: 'WELCOME TO JAYDAAR' }
     ];
 
     const interval = setInterval(() => {
-      // Elegant non-linear luxury counter progression
-      const increment = Math.floor(Math.random() * 3) + 2;
+      // Rapid, silky luxury progress
+      const increment = Math.floor(Math.random() * 10) + 16;
       currentPct = Math.min(currentPct + increment, 100);
 
       if (preloaderCount) {
@@ -61,10 +61,10 @@ document.addEventListener('DOMContentLoaded', () => {
           setTimeout(() => {
             preloader.style.display = 'none';
             if (preloaderVideo) preloaderVideo.pause();
-          }, 950);
-        }, 220);
+          }, 450);
+        }, 80);
       }
-    }, 32);
+    }, 18);
   }
 
   // DOM Elements
@@ -334,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!reelsGrid || !JAYDAAR_DATA.reels) return;
     reelsGrid.innerHTML = JAYDAAR_DATA.reels.map((reel, idx) => `
       <div class="reel-card" data-idx="${idx}">
-        <video class="reel-video" autoplay loop muted playsinline poster="${reel.poster}">
+        <video class="reel-video" loop muted playsinline preload="none" poster="${reel.poster}">
           <source src="${reel.video}" type="video/mp4">
         </video>
 
@@ -348,24 +348,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
     `).join('');
-
-    // Ensure continuous autoplay across all mobile & desktop browsers
-    const reelVideos = reelsGrid.querySelectorAll('.reel-video');
-    reelVideos.forEach(vid => {
-      vid.muted = true;
-      const playPromise = vid.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // If browser restricts un-interacted autoplay, start on touch/click
-          const unlockPlay = () => {
-            vid.play().catch(() => {});
-          };
-          window.addEventListener('touchstart', unlockPlay, { once: true, passive: true });
-          window.addEventListener('scroll', unlockPlay, { once: true, passive: true });
-          window.addEventListener('click', unlockPlay, { once: true });
-        });
-      }
-    });
   }
 
   // 6. Social Media Section (@jaydaar_) with Real Campaign Videos
@@ -373,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!socialPreviewGrid || !JAYDAAR_DATA.socialPosts) return;
     socialPreviewGrid.innerHTML = JAYDAAR_DATA.socialPosts.map(post => `
       <div class="social-tile" onclick="window.open('${post.url}', '_blank')">
-        <video class="social-video" autoplay loop muted playsinline poster="${post.poster}">
+        <video class="social-video" loop muted playsinline preload="none" poster="${post.poster}">
           <source src="${post.video}" type="video/mp4">
         </video>
         <div class="social-tile-overlay">
@@ -542,26 +524,38 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
     }
   };
 
-  // Global Autoplay Assurance for all videos (Hero, Featured, Reels)
-  function ensureAllVideosAutoplay() {
-    const allVideos = document.querySelectorAll('video');
-    allVideos.forEach(vid => {
-      vid.muted = true;
-      const playPromise = vid.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          const unlock = () => {
-            allVideos.forEach(v => {
-              v.muted = true;
-              v.play().catch(() => {});
-            });
-          };
-          window.addEventListener('touchstart', unlock, { once: true, passive: true });
-          window.addEventListener('scroll', unlock, { once: true, passive: true });
-          window.addEventListener('click', unlock, { once: true });
+  // Smart Autoplay: Play Hero immediately; lazy-play offscreen videos via IntersectionObserver
+  function initSmartVideoPlayback() {
+    const heroVid = document.getElementById('heroBgVideo');
+    if (heroVid) {
+      heroVid.muted = true;
+      heroVid.play().catch(() => {
+        const unlockHero = () => {
+          heroVid.play().catch(() => {});
+        };
+        window.addEventListener('touchstart', unlockHero, { once: true, passive: true });
+        window.addEventListener('scroll', unlockHero, { once: true, passive: true });
+        window.addEventListener('click', unlockHero, { once: true });
+      });
+    }
+
+    if ('IntersectionObserver' in window) {
+      const videoObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const vid = entry.target;
+          if (entry.isIntersecting) {
+            vid.muted = true;
+            vid.play().catch(() => {});
+          } else {
+            vid.pause();
+          }
         });
-      }
-    });
+      }, { rootMargin: '160px 0px 160px 0px', threshold: 0.05 });
+
+      document.querySelectorAll('.reel-video, .social-video, .featured-visual-video').forEach(vid => {
+        videoObserver.observe(vid);
+      });
+    }
   }
 
   // Initial Boot
@@ -570,5 +564,5 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
   renderGallery();
   renderReels();
   renderSocialMedia();
-  ensureAllVideosAutoplay();
+  initSmartVideoPlayback();
 });

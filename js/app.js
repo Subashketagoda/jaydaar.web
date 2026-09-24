@@ -287,20 +287,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 6. Cinema in Motion: Render Reels Showcase
+  // 6. Cinema in Motion: Render Reels Showcase (Continuous Autoplay, No Play Button)
   const reelsGrid = document.getElementById('reelsGrid');
 
   function renderReels() {
     if (!reelsGrid || !JAYDAAR_DATA.reels) return;
     reelsGrid.innerHTML = JAYDAAR_DATA.reels.map((reel, idx) => `
       <div class="reel-card" data-idx="${idx}">
-        <video class="reel-video" loop muted playsinline poster="${reel.poster}">
+        <video class="reel-video" autoplay loop muted playsinline poster="${reel.poster}">
           <source src="${reel.video}" type="video/mp4">
         </video>
-
-        <button class="reel-ctrl-btn" aria-label="Toggle Play" onclick="window.JaydaarApp.toggleReelPlay(${idx}, this)">
-          ▶
-        </button>
 
         <div class="reel-overlay">
           <span class="reel-tag">${reel.tag}</span>
@@ -313,23 +309,22 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `).join('');
 
-    // Smooth hover autoplay
-    document.querySelectorAll('.reel-card').forEach(card => {
-      const vid = card.querySelector('video');
-      const btn = card.querySelector('.reel-ctrl-btn');
-      card.addEventListener('mouseenter', () => {
-        if (vid && vid.paused) {
-          vid.play().then(() => {
-            if (btn) btn.textContent = '❚❚';
-          }).catch(() => {});
-        }
-      });
-      card.addEventListener('mouseleave', () => {
-        if (vid && !vid.paused) {
-          vid.pause();
-          if (btn) btn.textContent = '▶';
-        }
-      });
+    // Ensure continuous autoplay across all mobile & desktop browsers
+    const reelVideos = reelsGrid.querySelectorAll('.reel-video');
+    reelVideos.forEach(vid => {
+      vid.muted = true;
+      const playPromise = vid.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // If browser restricts un-interacted autoplay, start on touch/click
+          const unlockPlay = () => {
+            vid.play().catch(() => {});
+          };
+          window.addEventListener('touchstart', unlockPlay, { once: true, passive: true });
+          window.addEventListener('scroll', unlockPlay, { once: true, passive: true });
+          window.addEventListener('click', unlockPlay, { once: true });
+        });
+      }
     });
   }
 
@@ -495,21 +490,6 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
   window.JaydaarApp = {
     openProductModal,
     openLightbox,
-    toggleReelPlay: (idx, btn) => {
-      const card = document.querySelector(`.reel-card[data-idx="${idx}"]`);
-      if (!card) return;
-      const vid = card.querySelector('video');
-      if (!vid) return;
-      vid.muted = true;
-      if (vid.paused) {
-        vid.play().then(() => {
-          if (btn) btn.textContent = '❚❚';
-        }).catch(() => {});
-      } else {
-        vid.pause();
-        if (btn) btn.textContent = '▶';
-      }
-    },
     filterByCategory: (catId) => {
       state.activeCategory = catId;
       renderTabs();
@@ -519,10 +499,33 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
     }
   };
 
+  // Global Autoplay Assurance for all videos (Hero, Featured, Reels)
+  function ensureAllVideosAutoplay() {
+    const allVideos = document.querySelectorAll('video');
+    allVideos.forEach(vid => {
+      vid.muted = true;
+      const playPromise = vid.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          const unlock = () => {
+            allVideos.forEach(v => {
+              v.muted = true;
+              v.play().catch(() => {});
+            });
+          };
+          window.addEventListener('touchstart', unlock, { once: true, passive: true });
+          window.addEventListener('scroll', unlock, { once: true, passive: true });
+          window.addEventListener('click', unlock, { once: true });
+        });
+      }
+    });
+  }
+
   // Initial Boot
   renderTabs();
   renderProductsGrid();
   renderGallery();
   renderReels();
   renderSocialMedia();
+  ensureAllVideosAutoplay();
 });

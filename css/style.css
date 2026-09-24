@@ -1233,30 +1233,6 @@ button {
   border-bottom-color: #FFFFFF;
 }
 
-.reel-ctrl-btn {
-  position: absolute;
-  top: 1.25rem;
-  right: 1.25rem;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.65);
-  border: var(--border-line);
-  color: #FFFFFF;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(8px);
-  cursor: pointer;
-  z-index: 10;
-  transition: all var(--transition);
-}
-
-.reel-ctrl-btn:hover {
-  background: #FFFFFF;
-  color: #000000;
-}
-
 /* ==========================================================================
    8. Why Jaydaar Section
    ========================================================================== */
@@ -2168,12 +2144,6 @@ button {
 
   .reel-card {
     aspect-ratio: 9 / 16;
-  }
-
-  .reel-ctrl-btn {
-    width: 44px;
-    height: 44px;
-    font-size: 1rem;
   }
 
   .reel-overlay {

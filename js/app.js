@@ -70,10 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
           preloader.classList.add('fade-out');
-          // Start playing hero video seamlessly as curtains reveal site
-          const heroVid = document.getElementById('heroBgVideo');
-          if (heroVid && typeof playVideoSafely === 'function') {
-            playVideoSafely(heroVid);
+          // Trigger all videos to start playing immediately as curtains reveal site
+          if (typeof playAllVideos === 'function') {
+            playAllVideos();
           }
           setTimeout(() => {
             preloader.style.display = 'none';
@@ -348,7 +347,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 6. Cinema in Motion: Render Reels Showcase (Continuous Autoplay Cinema)
-  // 6. Cinema in Motion: Render Reels Showcase (Smooth Lazy Streaming Cinema)
   const reelsGrid = document.getElementById('reelsGrid');
 
   function renderReels() {
@@ -356,10 +354,9 @@ document.addEventListener('DOMContentLoaded', () => {
     reelsGrid.innerHTML = JAYDAAR_DATA.reels.map((reel, idx) => `
       <div class="reel-card" data-idx="${idx}">
         <div class="reel-live-badge"><span class="reel-live-dot"></span> LIVE MOTION</div>
-        <video class="reel-video" loop muted playsinline webkit-playsinline preload="none" poster="${reel.poster}">
-          <source src="${reel.video}" type="video/mp4">
+        <video class="reel-video" loop muted playsinline webkit-playsinline preload="none" poster="${reel.poster}" data-src="${reel.video}">
+          <source data-src="${reel.video}" type="video/mp4">
         </video>
-
         <div class="reel-overlay">
           <span class="reel-tag">${reel.tag}</span>
           <h4 class="reel-title">${reel.title}</h4>
@@ -370,15 +367,38 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
     `).join('');
+
+    // Lazy-load reel videos via IntersectionObserver
+    if ('IntersectionObserver' in window) {
+      const lazyVideoObs = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const vid = entry.target;
+          const src = vid.dataset.src;
+          if (src && !vid.src) {
+            vid.querySelectorAll('source[data-src]').forEach(s => { s.src = s.dataset.src; });
+            vid.src = src;
+            vid.load();
+            vid.play().catch(() => {});
+          }
+          obs.unobserve(vid);
+        });
+      }, { rootMargin: '200px 0px' });
+      reelsGrid.querySelectorAll('video[data-src]').forEach(v => lazyVideoObs.observe(v));
+    } else {
+      reelsGrid.querySelectorAll('video[data-src]').forEach(v => {
+        v.querySelectorAll('source[data-src]').forEach(s => { s.src = s.dataset.src; });
+        v.src = v.dataset.src; v.load(); v.play().catch(() => {});
+      });
+    }
   }
 
-  // 6. Social Media Section (@jaydaar_) with Real Campaign Videos
   function renderSocialMedia() {
     if (!socialPreviewGrid || !JAYDAAR_DATA.socialPosts) return;
     socialPreviewGrid.innerHTML = JAYDAAR_DATA.socialPosts.map(post => `
       <div class="social-tile" onclick="window.open('${post.url}', '_blank')">
-        <video class="social-video" loop muted playsinline webkit-playsinline preload="none" poster="${post.poster}">
-          <source src="${post.video}" type="video/mp4">
+        <video class="social-video" loop muted playsinline webkit-playsinline preload="none" poster="${post.poster}" data-src="${post.video}">
+          <source data-src="${post.video}" type="video/mp4">
         </video>
         <div class="social-tile-overlay">
           <svg width="26" height="26" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
@@ -386,6 +406,29 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
     `).join('');
+
+    // Lazy-load social videos
+    if ('IntersectionObserver' in window) {
+      const socialVideoObs = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const vid = entry.target;
+          if (vid.dataset.src && !vid.src) {
+            vid.querySelectorAll('source[data-src]').forEach(s => { s.src = s.dataset.src; });
+            vid.src = vid.dataset.src;
+            vid.load();
+            vid.play().catch(() => {});
+          }
+          obs.unobserve(vid);
+        });
+      }, { rootMargin: '200px 0px' });
+      socialPreviewGrid.querySelectorAll('video[data-src]').forEach(v => socialVideoObs.observe(v));
+    } else {
+      socialPreviewGrid.querySelectorAll('video[data-src]').forEach(v => {
+        v.querySelectorAll('source[data-src]').forEach(s => { s.src = s.dataset.src; });
+        v.src = v.dataset.src; v.load(); v.play().catch(() => {});
+      });
+    }
   }
 
   // 7. Contact / Atelier Concierge Form
@@ -546,55 +589,77 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
     }
   };
 
-  // High-Performance Priority Video Engine: Stream & Play only active videos
-  function playVideoSafely(vid) {
-    if (!vid) return;
-    vid.muted = true;
-    vid.defaultMuted = true;
-    vid.playsInline = true;
-    vid.setAttribute('muted', '');
-    vid.setAttribute('playsinline', '');
-    vid.setAttribute('webkit-playsinline', '');
-    vid.setAttribute('loop', '');
-    const p = vid.play();
-    if (p !== undefined) p.catch(() => {});
-  }
+  // Universal Video Engine: Ensure EVERY video autoplays smoothly across all devices
+  function playAllVideos() {
+    const allVideos = document.querySelectorAll('video');
+    allVideos.forEach(vid => {
+      // Skip preloader video if preloader is completed
+      if (preloader && preloader.style.display === 'none' && vid.classList.contains('preloader-bg-video')) {
+        return;
+      }
 
-  function pauseVideoSafely(vid) {
-    if (!vid || vid.id === 'heroBgVideo') return;
-    try { vid.pause(); } catch(e) {}
+      vid.muted = true;
+      vid.defaultMuted = true;
+      vid.playsInline = true;
+      vid.setAttribute('muted', '');
+      vid.setAttribute('playsinline', '');
+      vid.setAttribute('webkit-playsinline', '');
+      vid.setAttribute('autoplay', '');
+      vid.setAttribute('loop', '');
+
+      const p = vid.play();
+      if (p !== undefined) {
+        p.catch(() => {
+          // Will be unlocked by global interaction listeners
+        });
+      }
+    });
   }
 
   function initSmartVideoPlayback() {
-    // 1. Play hero video immediately
-    const heroVid = document.getElementById('heroBgVideo');
-    if (heroVid) playVideoSafely(heroVid);
+    // 1. Play all videos immediately
+    playAllVideos();
 
-    // 2. Fallback gesture unlock for hero video on strict mobile browsers
-    const unlockVisible = () => {
-      if (heroVid && heroVid.paused) playVideoSafely(heroVid);
-    };
-    ['touchstart', 'touchend', 'scroll', 'click', 'pointerdown'].forEach(evt => {
-      window.addEventListener(evt, unlockVisible, { once: true, passive: true });
+    // 2. Play video as soon as its metadata / first frame is ready
+    document.querySelectorAll('video').forEach(vid => {
+      vid.addEventListener('loadeddata', () => {
+        vid.muted = true;
+        vid.play().catch(() => {});
+      });
+      vid.addEventListener('canplay', () => {
+        vid.muted = true;
+        vid.play().catch(() => {});
+      });
     });
 
-    // 3. Viewport Intersection: Stream & Play ONLY when scrolled within 180px of screen
+    // 3. Fallback gesture unlock for strict Safari/iOS & Android Chrome policies
+    const unlockHandler = () => {
+      playAllVideos();
+    };
+    ['touchstart', 'touchend', 'scroll', 'click', 'pointerdown', 'keydown'].forEach(evt => {
+      window.addEventListener(evt, unlockHandler, { once: true, passive: true });
+    });
+
+    // 4. Viewport Intersection: Guarantee continuous active playback when scrolling into view
     if ('IntersectionObserver' in window) {
       const videoObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           const vid = entry.target;
           if (entry.isIntersecting) {
-            playVideoSafely(vid);
-          } else {
-            pauseVideoSafely(vid);
+            vid.muted = true;
+            vid.play().catch(() => {});
           }
         });
-      }, { rootMargin: '180px 0px 180px 0px', threshold: 0.05 });
+      }, { rootMargin: '250px 0px 250px 0px', threshold: 0.01 });
 
-      document.querySelectorAll('.reel-video, .social-video, .featured-visual-video').forEach(vid => {
-        videoObserver.observe(vid);
+      document.querySelectorAll('video').forEach(vid => {
+        if (!vid.classList.contains('preloader-bg-video')) {
+          videoObserver.observe(vid);
+        }
       });
     }
+
+    // 5. Remove watchdog — IntersectionObserver handles playback resumption cleanly
   }
 
   // 9. Luxury Cursor Engine (Desktop)
@@ -643,8 +708,6 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
   }
 
   // Initial Boot
-  renderTabs();
-  renderProductsGrid();
   renderGallery();
   renderReels();
   renderSocialMedia();

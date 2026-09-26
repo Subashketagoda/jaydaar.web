@@ -32,10 +32,39 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="assets/images/jaydaar_favicon.png">
 
-  <!-- Core Stylesheets -->
+  <!-- Resource Hints & Google Fonts (Parallel Non-blocking Fetch) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap">
+  <link rel="dns-prefetch" href="https://wa.me">
+  <link rel="dns-prefetch" href="https://verveo3.pixieset.com">
+
+  <!-- Core Stylesheet -->
   <link rel="stylesheet" href="css/style.css">
+
+  <!-- JSON-LD Structured Data for Luxury Brand SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ClothingStore",
+    "name": "JAYDAAR",
+    "description": "Sri Lankan handcrafted luxury batik apparel, synchronized couple matching ensembles, and bespoke tailored pieces.",
+    "url": "https://subashketagoda.github.io/jaydaar.web/",
+    "logo": "https://subashketagoda.github.io/jaydaar.web/assets/images/jaydaar_logo.png",
+    "image": "https://subashketagoda.github.io/jaydaar.web/assets/images/jaydaar_og_share.jpg",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Galle Fort & Colombo",
+      "addressCountry": "LK"
+    },
+    "sameAs": [
+      "https://instagram.com/jaydaar_"
+    ]
+  }
+  </script>
 </head>
 <body>
+  <a href="#hero" class="skip-link">Skip to main content</a>
 
   <!-- ==========================================================================
        1. Haute Couture Loading Experience (Atelier Preloader)
@@ -58,7 +87,7 @@
     <!-- Center Brand Showcase -->
     <div class="preloader-center-content">
       <div class="preloader-logo-wrapper">
-        <img src="assets/images/jaydaar_logo.png" alt="Jaydaar - A style that is timeless" class="preloader-logo-img">
+        <img src="assets/images/jaydaar_logo.png?v=2" alt="Jaydaar - A style that is timeless" class="preloader-logo-img" width="200" height="99">
       </div>
       
       <div class="preloader-status-wrap">
@@ -100,14 +129,14 @@
       
       <!-- Brand Logo / Wordmark -->
       <a href="#hero" class="brand-logo" aria-label="Jaydaar Home">
-        <img src="assets/images/jaydaar_logo.png" alt="Jaydaar - A style that is timeless" class="site-logo-img">
+        <img src="assets/images/jaydaar_logo.png?v=2" alt="Jaydaar - A style that is timeless" class="site-logo-img" width="200" height="99">
       </a>
 
       <!-- Main Navigation Menu -->
       <nav class="main-nav" id="mainNav">
         <a href="#hero" class="nav-link">Home</a>
         <a href="#about" class="nav-link">About</a>
-        <a href="#products" class="nav-link">Collections</a>
+        <a href="https://verveo3.pixieset.com/jaydaarsarees/" target="_blank" rel="noopener noreferrer" class="nav-link">Collections</a>
         <a href="#featured" class="nav-link">Featured</a>
         <a href="#gallery" class="nav-link">Gallery</a>
         <a href="#reels" class="nav-link">Motion</a>
@@ -138,7 +167,7 @@
        ========================================================================== -->
   <section class="hero-editorial" id="hero">
     <div class="hero-img-wrap">
-      <video class="hero-bg-video" autoplay muted loop playsinline webkit-playsinline preload="metadata" poster="assets/images/jaydaar_couple_amber_flame.jpg" id="heroBgVideo">
+      <video class="hero-bg-video" autoplay muted loop playsinline webkit-playsinline preload="auto" fetchpriority="high" poster="assets/images/jaydaar_couple_amber_flame.jpg" id="heroBgVideo">
         <source src="assets/videos/jaydaar_quiet_luxury_heritage.mp4" type="video/mp4">
         <img src="assets/images/jaydaar_couple_amber_flame.jpg" alt="Jaydaar Couple Wearing Handcrafted Batik Collection" class="hero-img">
       </video>
@@ -157,25 +186,39 @@
         </p>
       </div>
       <div class="hero-actions">
-        <a href="#products" class="btn-minimal-white">
-          Explore Collections
-        </a>
-        <a href="https://wa.me/94771234567?text=Hello%20Jaydaar!%20I%20would%20like%20to%20inquire%20about%20your%20batik%20collections." target="_blank" class="btn-minimal-ghost">
-          Inquire on WhatsApp
-        </a>
-        <div class="hero-scroll-cue" onclick="document.getElementById('about').scrollIntoView({behavior: 'smooth'})">
-          <div class="scroll-mouse-icon">
-            <span class="scroll-mouse-wheel"></span>
-          </div>
-          <span class="scroll-cue-label">EXPLORE ARCHIVE</span>
+        <div class="hero-btn-group">
+          <a href="https://verveo3.pixieset.com/jaydaarsarees/" target="_blank" rel="noopener noreferrer" class="btn-minimal-white">
+            Explore Collections
+          </a>
+          <a href="https://wa.me/94771234567?text=Hello%20Jaydaar!%20I%20would%20like%20to%20inquire%20about%20your%20batik%20collections." target="_blank" class="btn-minimal-ghost">
+            Inquire on WhatsApp
+          </a>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ==========================================================================
-       4. About The Business
+       Cinema in Motion / Real Instagram Reels Showcase
        ========================================================================== -->
+  <section class="reels-section" id="reels">
+    <div class="container">
+      <div class="editorial-header-row">
+        <div>
+          <span class="editorial-section-num">05 / Cinema in Motion</span>
+          <h2 class="editorial-section-title">Atelier Reels &amp; Campaigns</h2>
+        </div>
+        <p class="editorial-section-desc">
+          Witness authentic fabric fluidities, wax crackle textures, and bridal drapes captured directly from our campaigns.
+        </p>
+      </div>
+
+      <div class="reels-grid" id="reelsGrid">
+        <!-- Rendered by JavaScript -->
+      </div>
+    </div>
+  </section>
+
   <section class="editorial-section" id="about">
     <div class="container">
       <div class="editorial-header-row">
@@ -235,43 +278,6 @@
     </div>
   </section>
 
-  <!-- ==========================================================================
-       5. Services / Products Section (The Collections)
-       ========================================================================== -->
-  <section class="editorial-section" id="products">
-    <div class="container">
-      
-      <div class="editorial-header-row">
-        <div>
-          <span class="editorial-section-num">02 / The Collections</span>
-          <h2 class="editorial-section-title">Signature Offerings</h2>
-        </div>
-        <p class="editorial-section-desc">
-          Select any piece to inspect silhouettes, fabric specifications, and inquire directly with our atelier on WhatsApp.
-        </p>
-      </div>
-
-      <!-- Controls & Filter Toolbar -->
-      <div class="catalog-bar">
-        <!-- Category Filter Tabs -->
-        <div class="catalog-tabs" id="catalogTabsContainer">
-          <!-- Populated by JavaScript -->
-        </div>
-
-        <!-- Search input -->
-        <div class="catalog-search-wrap">
-          <svg class="search-icon-min" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="catalogSearchInput" class="catalog-search-input" placeholder="Search archive (Flame, Lotus, Sage)...">
-        </div>
-      </div>
-
-      <!-- 3-Column Editorial Products Grid -->
-      <div class="editorial-products-grid" id="editorialProductsGrid">
-        <!-- Rendered by JavaScript -->
-      </div>
-
-    </div>
-  </section>
 
   <!-- ==========================================================================
        6. Featured Section (Signature Flame Couple Set)
@@ -281,7 +287,7 @@
       <div class="featured-grid">
         
         <div class="featured-visual-wrap">
-          <video class="featured-visual-video" loop muted playsinline webkit-playsinline preload="none" poster="assets/images/jaydaar_couple_amber_flame.jpg" id="featuredVisualVideo">
+          <video class="featured-visual-video" autoplay loop muted playsinline webkit-playsinline preload="none" poster="assets/images/jaydaar_couple_amber_flame.jpg" id="featuredVisualVideo">
             <source src="assets/videos/jaydaar_sunset_hues_flame.mp4" type="video/mp4">
             <img src="assets/images/jaydaar_couple_amber_flame.jpg" alt="Jaydaar Signature Flame Couple Set" class="featured-visual-img">
           </video>
@@ -340,29 +346,24 @@
       <div class="lookbook-masonry" id="galleryMasonry">
         <!-- Rendered by JavaScript -->
       </div>
-    </div>
-  </section>
 
-  <!-- ==========================================================================
-       Cinema in Motion / Real Instagram Reels Showcase
-       ========================================================================== -->
-  <section class="reels-section" id="reels">
-    <div class="container">
-      <div class="editorial-header-row">
-        <div>
-          <span class="editorial-section-num">05 / Cinema in Motion</span>
-          <h2 class="editorial-section-title">Atelier Reels & Campaigns</h2>
-        </div>
-        <p class="editorial-section-desc">
-          Witness authentic fabric fluidities, wax crackle textures, and bridal drapes captured directly from our campaigns.
-        </p>
-      </div>
-
-      <div class="reels-grid" id="reelsGrid">
-        <!-- Rendered by JavaScript -->
+      <div class="gallery-pixieset-cta">
+        <a href="https://verveo3.pixieset.com/jaydaarsarees/" target="_blank" rel="noopener noreferrer" class="gallery-pixieset-banner">
+          <div class="gpb-left">
+            <span class="gpb-eyebrow">Full Archive · Pixieset</span>
+            <span class="gpb-title">View the complete<em> Saree Gallery</em></span>
+          </div>
+          <div class="gpb-right">
+            <span class="gpb-cta-label">Open Gallery</span>
+            <div class="gpb-arrow-wrap">
+              <svg class="gpb-arrow" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>
+            </div>
+          </div>
+        </a>
       </div>
     </div>
   </section>
+
 
   <!-- ==========================================================================
        Why Jaydaar (Brand Advantages)
@@ -554,7 +555,7 @@
         
         <div>
           <a href="#hero" aria-label="Jaydaar Home">
-            <img src="assets/images/jaydaar_logo.png" alt="Jaydaar - A style that is timeless" class="footer-logo-img">
+            <img src="assets/images/jaydaar_logo.png?v=2" alt="Jaydaar - A style that is timeless" class="footer-logo-img" width="200" height="99">
           </a>
           <p class="footer-brand-sub">Artisanal Sri Lankan Batik Atelier &bull; Colombo & Galle</p>
         </div>
@@ -565,7 +566,7 @@
             <div class="footer-links-group">
               <a href="#hero" class="footer-link-min">Home</a>
               <a href="#about" class="footer-link-min">About Jaydaar</a>
-              <a href="#products" class="footer-link-min">The Collections</a>
+              <a href="https://verveo3.pixieset.com/jaydaarsarees/" target="_blank" rel="noopener noreferrer" class="footer-link-min">The Collections (Pixieset)</a>
               <a href="#featured" class="footer-link-min">Featured Creation</a>
               <a href="#gallery" class="footer-link-min">Visual Gallery</a>
               <a href="#reels" class="footer-link-min">Cinema in Motion</a>
@@ -715,19 +716,15 @@
   <!-- Floating Atelier Concierge Widget -->
   <aside class="floating-concierge" aria-label="Atelier Concierge">
     <a href="https://wa.me/94771234567?text=Hello%20Jaydaar!%20I%20am%20exploring%20your%20archive%20and%20would%20like%20to%20consult%20an%20atelier%20stylist." target="_blank" class="concierge-trigger" id="conciergeTrigger" aria-label="Direct WhatsApp Concierge">
-      <div class="concierge-badge">
-        <span class="concierge-pulse"></span>
-        <span class="concierge-status">Atelier Online</span>
-      </div>
-      <div class="concierge-btn-inner">
-        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.634.075-1.045-.052-.777-.238-1.748-.828-2.545-1.626-.811-.813-1.4-1.79-1.628-2.569-.117-.402-.09-.721-.044-1.032.049-.333.418-1.026.823-1.17.159-.057.34-.055.495.031.144.081.82 1.488.94 1.706.075.135.087.27.017.405-.125.241-.303.411-.476.584-.093.093-.191.196-.08.388.243.42 1.018 1.489 1.956 1.968.188.096.29.006.381-.088.169-.175.337-.354.577-.478.135-.07.27-.058.405.017.218.12 1.625.796 1.706.94.086.155.088.336.031.495z"/></svg>
-        <span>Consult Stylist</span>
-      </div>
+      <span class="concierge-pulse"></span>
+      <span class="concierge-divider"></span>
+      <svg width="17" height="17" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.634.075-1.045-.052-.777-.238-1.748-.828-2.545-1.626-.811-.813-1.4-1.79-1.628-2.569-.117-.402-.09-.721-.044-1.032.049-.333.418-1.026.823-1.17.159-.057.34-.055.495.031.144.081.82 1.488.94 1.706.075.135.087.27.017.405-.125.241-.303.411-.476.584-.093.093-.191.196-.08.388.243.42 1.018 1.489 1.956 1.968.188.096.29.006.381-.088.169-.175.337-.354.577-.478.135-.07.27-.058.405.017.218.12 1.625.796 1.706.94.086.155.088.336.031.495z"/></svg>
+      <span class="concierge-label">Consult Atelier</span>
     </a>
   </aside>
 
   <!-- Scripts -->
-  <script src="js/products.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/products.js" defer></script>
+  <script src="js/app.js" defer></script>
 </body>
 </html>

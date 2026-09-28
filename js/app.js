@@ -123,33 +123,212 @@ document.addEventListener('DOMContentLoaded', () => {
   // Contact Form
   const atelierInquiryForm = document.getElementById('atelierInquiryForm');
 
-  // 2. Navigation: Sticky Header & Active Section Spy
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 40) {
-      siteHeader.classList.add('scrolled');
-    } else {
-      siteHeader.classList.remove('scrolled');
-    }
-    updateActiveNav();
-  });
+  // Hero Pure Video / Cinema View Toggle
+  const heroSection = document.getElementById('hero');
+  const heroCleanToggle = document.getElementById('heroCleanToggle');
+  const cleanToggleLabel = document.getElementById('cleanToggleLabel');
 
-  function updateActiveNav() {
-    const sections = ['hero', 'about', 'products', 'featured', 'gallery', 'reels', 'whyJaydaar', 'contact'];
-    const scrollPos = window.scrollY + 200;
-
-    sections.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) {
-        const top = el.offsetTop;
-        const height = el.offsetHeight;
-        const navLink = document.querySelector(`.main-nav a[href="#${id}"]`);
-        if (scrollPos >= top && scrollPos < top + height) {
-          document.querySelectorAll('.main-nav .nav-link').forEach(l => l.classList.remove('active'));
-          if (navLink) navLink.classList.add('active');
-        }
+  if (heroSection && heroCleanToggle) {
+    heroCleanToggle.addEventListener('click', () => {
+      const isClean = heroSection.classList.toggle('clean-view');
+      if (cleanToggleLabel) {
+        cleanToggleLabel.textContent = isClean ? 'Show Text' : 'Pure Video';
       }
+      heroCleanToggle.setAttribute('aria-pressed', isClean ? 'true' : 'false');
     });
   }
+
+  // ==========================================================================
+  // Hero Scroll-Driven Sticky Reveal Engine (Full Screen Video -> Slow Rise Text -> Page Roll)
+  // ==========================================================================
+  const heroTrack = document.getElementById('heroTrack');
+  const heroEditorial = document.getElementById('hero');
+  const heroBottomContent = document.getElementById('heroBottomContent');
+  const heroGradient = document.getElementById('heroGradient');
+  const heroScrollCue = document.getElementById('heroScrollCue');
+  const heroBgVideo = document.getElementById('heroBgVideo');
+  const floatingConcierge = document.getElementById('floatingConcierge');
+
+  function updateHeroScroll() {
+    if (!heroTrack || !heroEditorial) return;
+
+    const rect = heroTrack.getBoundingClientRect();
+    const trackHeight = heroTrack.offsetHeight;
+    const viewportHeight = window.innerHeight;
+    const scrollableDistance = trackHeight - viewportHeight;
+
+    if (scrollableDistance <= 0) return;
+
+    // Scrolled amount within track: 0 when at top
+    const scrolled = -rect.top;
+    const rawProgress = scrolled / scrollableDistance;
+    const progress = Math.max(0, Math.min(1, rawProgress));
+
+    // Phase 1: As user scrolls from 0 to 0.45, hero text gracefully floats UP from below into view
+    const textProgress = Math.max(0, Math.min(1, progress / 0.45));
+    // High-end cubic ease out
+    const easedText = 1 - Math.pow(1 - textProgress, 3);
+
+    // Text translateY: from 80px (tucked below) to 0px (at rest)
+    const translateY = (1 - easedText) * 80;
+    // Text opacity: from 0 to 1
+    const textOpacity = Math.max(0, Math.min(1, textProgress * 1.25));
+
+    // Bottom gradient opacity: from 0.08 (pure video clarity) to 0.88 (deep contrast for text)
+    const gradientOpacity = 0.08 + (easedText * 0.80);
+
+    // Initial "Scroll to Discover" cue indicator fades out rapidly as soon as user starts scrolling (0 to 0.15)
+    const cueProgress = Math.max(0, Math.min(1, progress / 0.15));
+    const cueOpacity = 1 - cueProgress;
+    const cueTranslateY = cueProgress * 20;
+
+    // Phase 2: Gentle parallax on video / subtle dimming as the next section comes in (progress 0.70 to 1.0)
+    let videoScale = 1.0;
+    let videoDim = 1.0;
+    let textParallax = 0;
+    if (progress > 0.70) {
+      const exitP = (progress - 0.70) / 0.30;
+      videoScale = 1.0 + (exitP * 0.03);
+      videoDim = 1.0 - (exitP * 0.25);
+      textParallax = -exitP * 35; // gentle upward drift as page slides over
+    }
+
+    // Apply values via CSS custom properties on container
+    heroEditorial.style.setProperty('--hero-text-y', `${(translateY + textParallax).toFixed(1)}px`);
+    heroEditorial.style.setProperty('--hero-text-opacity', textOpacity.toFixed(3));
+    heroEditorial.style.setProperty('--hero-gradient-opacity', gradientOpacity.toFixed(3));
+    heroEditorial.style.setProperty('--hero-pointer-events', textProgress > 0.45 ? 'auto' : 'none');
+
+    if (heroScrollCue) {
+      heroScrollCue.style.setProperty('--cue-opacity', cueOpacity.toFixed(3));
+      heroScrollCue.style.setProperty('--cue-y', `${cueTranslateY.toFixed(1)}px`);
+    }
+
+    if (heroBgVideo) {
+      heroBgVideo.style.transform = `scale(${videoScale.toFixed(3)})`;
+      heroBgVideo.style.opacity = videoDim.toFixed(3);
+    }
+
+    // Floating Concierge Widget: completely hidden on Hero, smoothly rises up on scroll
+    if (floatingConcierge) {
+      if (window.scrollY > 280 || progress > 0.25) {
+        floatingConcierge.classList.add('visible');
+      } else {
+        floatingConcierge.classList.remove('visible');
+      }
+    }
+  }
+
+  // Initial call on load
+  updateHeroScroll();
+  window.addEventListener('resize', updateHeroScroll, { passive: true });
+
+  // ==========================================================================
+  // Lenis Butter-Smooth Luxury Momentum Scrolling Engine
+  // ==========================================================================
+  let lenis = null;
+  if (typeof Lenis !== 'undefined') {
+    lenis = new Lenis({
+      duration: 1.25,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential luxury ease-out
+      direction: 'vertical',
+      gestureDirection: 'vertical',
+      smooth: true,
+      mouseMultiplier: 1.0,
+      smoothTouch: false,
+      touchMultiplier: 1.8,
+      infinite: false,
+    });
+
+    lenis.on('scroll', () => {
+      updateHeroScroll();
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // Smooth anchor navigation with Lenis
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const targetId = this.getAttribute('href');
+        if (targetId && targetId !== '#') {
+          if (targetId === '#hero') {
+            e.preventDefault();
+            lenis.scrollTo(0, { duration: 1.2 });
+            return;
+          }
+          const targetEl = document.querySelector(targetId);
+          if (targetEl) {
+            e.preventDefault();
+            lenis.scrollTo(targetEl, {
+              offset: -60,
+              duration: 1.2
+            });
+          }
+        }
+      });
+    });
+  }
+
+  // 2. Navigation: Sticky Header & Active Section Spy (RAF Throttled for 60/120fps)
+  const trackedSections = [
+    { id: 'hero', el: document.getElementById('heroTrack') || document.getElementById('hero'), link: document.querySelector('.main-nav a[href="#hero"]') },
+    { id: 'about', el: document.getElementById('about'), link: document.querySelector('.main-nav a[href="#about"]') },
+    { id: 'products', el: document.getElementById('products'), link: document.querySelector('.main-nav a[href="#products"]') },
+    { id: 'featured', el: document.getElementById('featured'), link: document.querySelector('.main-nav a[href="#featured"]') },
+    { id: 'gallery', el: document.getElementById('gallery'), link: document.querySelector('.main-nav a[href="#gallery"]') },
+    { id: 'reels', el: document.getElementById('reels'), link: document.querySelector('.main-nav a[href="#reels"]') },
+    { id: 'whyJaydaar', el: document.getElementById('whyJaydaar'), link: document.querySelector('.main-nav a[href="#whyJaydaar"]') },
+    { id: 'contact', el: document.getElementById('contact'), link: document.querySelector('.main-nav a[href="#contact"]') }
+  ].filter(item => item.el && item.link);
+
+  let scrollTicking = false;
+
+  function handleScrollTick() {
+    updateHeroScroll();
+
+    const scrollY = window.scrollY;
+    if (scrollY > 40) {
+      if (!siteHeader.classList.contains('scrolled')) siteHeader.classList.add('scrolled');
+    } else {
+      if (siteHeader.classList.contains('scrolled')) siteHeader.classList.remove('scrolled');
+    }
+
+    const scrollPos = scrollY + 220;
+    let currentActiveId = null;
+
+    for (let i = 0; i < trackedSections.length; i++) {
+      const { id, el } = trackedSections[i];
+      const top = el.offsetTop;
+      const height = el.offsetHeight;
+      if (scrollPos >= top && scrollPos < top + height) {
+        currentActiveId = id;
+        break;
+      }
+    }
+
+    if (currentActiveId) {
+      trackedSections.forEach(({ id, link }) => {
+        if (id === currentActiveId) {
+          if (!link.classList.contains('active')) link.classList.add('active');
+        } else {
+          if (link.classList.contains('active')) link.classList.remove('active');
+        }
+      });
+    }
+
+    scrollTicking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!scrollTicking) {
+      requestAnimationFrame(handleScrollTick);
+      scrollTicking = true;
+    }
+  }, { passive: true });
 
   // Mobile Menu Toggle
   if (mobileMenuToggle && mainNav) {
@@ -354,8 +533,8 @@ document.addEventListener('DOMContentLoaded', () => {
     reelsGrid.innerHTML = JAYDAAR_DATA.reels.map((reel, idx) => `
       <div class="reel-card" data-idx="${idx}">
         <div class="reel-live-badge"><span class="reel-live-dot"></span> LIVE MOTION</div>
-        <video class="reel-video" loop muted playsinline webkit-playsinline preload="none" poster="${reel.poster}" data-src="${reel.video}">
-          <source data-src="${reel.video}" type="video/mp4">
+        <video class="reel-video" loop muted playsinline webkit-playsinline preload="auto" poster="${reel.poster}">
+          <source src="${reel.video}" type="video/mp4">
         </video>
         <div class="reel-overlay">
           <span class="reel-tag">${reel.tag}</span>
@@ -368,37 +547,28 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `).join('');
 
-    // Lazy-load reel videos via IntersectionObserver
-    if ('IntersectionObserver' in window) {
-      const lazyVideoObs = new IntersectionObserver((entries, obs) => {
-        entries.forEach(entry => {
-          if (!entry.isIntersecting) return;
-          const vid = entry.target;
-          const src = vid.dataset.src;
-          if (src && !vid.src) {
-            vid.querySelectorAll('source[data-src]').forEach(s => { s.src = s.dataset.src; });
-            vid.src = src;
-            vid.load();
-            vid.play().catch(() => {});
-          }
-          obs.unobserve(vid);
-        });
-      }, { rootMargin: '200px 0px' });
-      reelsGrid.querySelectorAll('video[data-src]').forEach(v => lazyVideoObs.observe(v));
-    } else {
-      reelsGrid.querySelectorAll('video[data-src]').forEach(v => {
-        v.querySelectorAll('source[data-src]').forEach(s => { s.src = s.dataset.src; });
-        v.src = v.dataset.src; v.load(); v.play().catch(() => {});
+    // Attach click to play/pause on reels
+    reelsGrid.querySelectorAll('.reel-card').forEach(card => {
+      const vid = card.querySelector('video');
+      if (!vid) return;
+
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('a') || e.target.closest('button')) return;
+        if (vid.paused) {
+          vid.play().catch(() => {});
+        } else {
+          vid.pause();
+        }
       });
-    }
+    });
   }
 
   function renderSocialMedia() {
     if (!socialPreviewGrid || !JAYDAAR_DATA.socialPosts) return;
     socialPreviewGrid.innerHTML = JAYDAAR_DATA.socialPosts.map(post => `
       <div class="social-tile" onclick="window.open('${post.url}', '_blank')">
-        <video class="social-video" loop muted playsinline webkit-playsinline preload="none" poster="${post.poster}" data-src="${post.video}">
-          <source data-src="${post.video}" type="video/mp4">
+        <video class="social-video" loop muted playsinline webkit-playsinline preload="auto" poster="${post.poster}">
+          <source src="${post.video}" type="video/mp4">
         </video>
         <div class="social-tile-overlay">
           <svg width="26" height="26" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
@@ -406,29 +576,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
     `).join('');
-
-    // Lazy-load social videos
-    if ('IntersectionObserver' in window) {
-      const socialVideoObs = new IntersectionObserver((entries, obs) => {
-        entries.forEach(entry => {
-          if (!entry.isIntersecting) return;
-          const vid = entry.target;
-          if (vid.dataset.src && !vid.src) {
-            vid.querySelectorAll('source[data-src]').forEach(s => { s.src = s.dataset.src; });
-            vid.src = vid.dataset.src;
-            vid.load();
-            vid.play().catch(() => {});
-          }
-          obs.unobserve(vid);
-        });
-      }, { rootMargin: '200px 0px' });
-      socialPreviewGrid.querySelectorAll('video[data-src]').forEach(v => socialVideoObs.observe(v));
-    } else {
-      socialPreviewGrid.querySelectorAll('video[data-src]').forEach(v => {
-        v.querySelectorAll('source[data-src]').forEach(s => { s.src = s.dataset.src; });
-        v.src = v.dataset.src; v.load(); v.play().catch(() => {});
-      });
-    }
   }
 
   // 7. Contact / Atelier Concierge Form
@@ -590,29 +737,25 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
   };
 
   // Universal Video Engine: Ensure EVERY video autoplays smoothly across all devices
+  function safePlayVideo(vid) {
+    if (!vid) return;
+    vid.muted = true;
+    vid.defaultMuted = true;
+    vid.playsInline = true;
+    vid.setAttribute('playsinline', '');
+    vid.setAttribute('webkit-playsinline', '');
+    vid.setAttribute('muted', '');
+    const p = vid.play();
+    if (p !== undefined) {
+      p.catch(() => {});
+    }
+  }
+
   function playAllVideos() {
     const allVideos = document.querySelectorAll('video');
     allVideos.forEach(vid => {
-      // Skip preloader video if preloader is completed
-      if (preloader && preloader.style.display === 'none' && vid.classList.contains('preloader-bg-video')) {
-        return;
-      }
-
-      vid.muted = true;
-      vid.defaultMuted = true;
-      vid.playsInline = true;
-      vid.setAttribute('muted', '');
-      vid.setAttribute('playsinline', '');
-      vid.setAttribute('webkit-playsinline', '');
-      vid.setAttribute('autoplay', '');
-      vid.setAttribute('loop', '');
-
-      const p = vid.play();
-      if (p !== undefined) {
-        p.catch(() => {
-          // Will be unlocked by global interaction listeners
-        });
-      }
+      if (vid.classList.contains('preloader-bg-video')) return;
+      safePlayVideo(vid);
     });
   }
 
@@ -622,13 +765,12 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
 
     // 2. Play video as soon as its metadata / first frame is ready
     document.querySelectorAll('video').forEach(vid => {
-      vid.addEventListener('loadeddata', () => {
-        vid.muted = true;
-        vid.play().catch(() => {});
-      });
-      vid.addEventListener('canplay', () => {
-        vid.muted = true;
-        vid.play().catch(() => {});
+      ['loadeddata', 'canplay', 'loadedmetadata'].forEach(evt => {
+        vid.addEventListener(evt, () => {
+          if (!vid.classList.contains('preloader-bg-video')) {
+            safePlayVideo(vid);
+          }
+        }, { once: true });
       });
     });
 
@@ -640,17 +782,21 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
       window.addEventListener(evt, unlockHandler, { once: true, passive: true });
     });
 
-    // 4. Viewport Intersection: Guarantee continuous active playback when scrolling into view
+    // 4. Viewport Intersection: Play videos when in view, PAUSE when off-screen to free GPU
     if ('IntersectionObserver' in window) {
       const videoObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           const vid = entry.target;
           if (entry.isIntersecting) {
-            vid.muted = true;
-            vid.play().catch(() => {});
+            safePlayVideo(vid);
+          } else {
+            // Keep hero playing, pause off-screen reels to keep GPU fresh
+            if (!vid.classList.contains('hero-bg-video') && !vid.classList.contains('preloader-bg-video')) {
+              vid.pause();
+            }
           }
         });
-      }, { rootMargin: '250px 0px 250px 0px', threshold: 0.01 });
+      }, { rootMargin: '160px 0px 160px 0px', threshold: 0.02 });
 
       document.querySelectorAll('video').forEach(vid => {
         if (!vid.classList.contains('preloader-bg-video')) {
@@ -658,11 +804,9 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
         }
       });
     }
-
-    // 5. Remove watchdog — IntersectionObserver handles playback resumption cleanly
   }
 
-  // 9. Luxury Cursor Engine (Desktop)
+  // 9. Luxury Cursor Engine (Desktop, Decoupled GPU Compositor)
   function initLuxuryCursor() {
     const dot = document.getElementById('cursorDot');
     const ring = document.getElementById('cursorRing');
@@ -671,17 +815,25 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
 
     let mouseX = -100, mouseY = -100;
     let ringX = -100, ringY = -100;
+    let hasMoved = false;
 
     window.addEventListener('mousemove', (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
-    });
+      if (!hasMoved) {
+        ringX = mouseX;
+        ringY = mouseY;
+        hasMoved = true;
+      }
+    }, { passive: true });
 
     function renderCursor() {
-      ringX += (mouseX - ringX) * 0.16;
-      ringY += (mouseY - ringY) * 0.16;
-      ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+      if (hasMoved) {
+        dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+        ringX += (mouseX - ringX) * 0.18;
+        ringY += (mouseY - ringY) * 0.18;
+        ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+      }
       requestAnimationFrame(renderCursor);
     }
     requestAnimationFrame(renderCursor);

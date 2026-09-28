@@ -122,24 +122,30 @@
   </div>
 
   <!-- ==========================================================================
-       2. Sticky Navigation Header
+       2. Sticky Navigation Header (Haute Couture Luxury Atelier Bar)
        ========================================================================== -->
   <header class="site-header" id="siteHeader">
     <div class="container header-inner">
       
-      <!-- Brand Logo / Wordmark -->
+      <!-- Brand Logo / Wordmark with Luxury Glow -->
       <a href="#hero" class="brand-logo" aria-label="Jaydaar Home">
         <img src="assets/images/jaydaar_logo.png?v=2" alt="Jaydaar - A style that is timeless" class="site-logo-img" width="200" height="99">
       </a>
 
       <!-- Main Navigation Menu -->
       <nav class="main-nav" id="mainNav">
-        <a href="#hero" class="nav-link">Home</a>
+        <a href="#hero" class="nav-link active">Home</a>
         <a href="#about" class="nav-link">About</a>
-        <a href="https://verveo3.pixieset.com/jaydaarsarees/" target="_blank" rel="noopener noreferrer" class="nav-link">Collections</a>
+        <a href="https://verveo3.pixieset.com/jaydaarsarees/" target="_blank" rel="noopener noreferrer" class="nav-link nav-link-external">
+          <span>Collections</span>
+          <svg class="nav-ext-icon" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </a>
         <a href="#featured" class="nav-link">Featured</a>
         <a href="#gallery" class="nav-link">Gallery</a>
-        <a href="#reels" class="nav-link">Motion</a>
+        <a href="#reels" class="nav-link">
+          <span>Motion</span>
+          <span class="nav-live-dot" title="Video Campaigns"></span>
+        </a>
         <a href="#whyJaydaar" class="nav-link">Why Jaydaar</a>
         <a href="#contact" class="nav-link">Contact</a>
         <a href="https://wa.me/94771234567?text=Hello%20Jaydaar!%20I%20am%20viewing%20your%20atelier%20website%20and%20would%20like%20to%20inquire." target="_blank" class="mobile-nav-cta">
@@ -150,7 +156,8 @@
       <!-- Quick Actions -->
       <div class="header-actions">
         <a href="https://wa.me/94771234567?text=Hello%20Jaydaar!%20I%20am%20viewing%20your%20atelier%20website%20and%20would%20like%20to%20inquire." target="_blank" class="btn-header-inquire">
-          Inquire Atelier
+          <span class="btn-inquire-dot"></span>
+          <span>Inquire Atelier</span>
         </a>
         <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle navigation menu">
           <span></span>
@@ -163,40 +170,56 @@
   </header>
 
   <!-- ==========================================================================
-       3. Full-Bleed Haute Couture Hero Section
+       3. Full-Bleed Haute Couture Hero Section with Sticky Scroll-Driven Reveal
        ========================================================================== -->
-  <section class="hero-editorial" id="hero">
-    <div class="hero-img-wrap">
-      <video class="hero-bg-video" autoplay muted loop playsinline webkit-playsinline preload="auto" fetchpriority="high" poster="assets/images/jaydaar_couple_amber_flame.jpg" id="heroBgVideo">
-        <source src="assets/videos/jaydaar_quiet_luxury_heritage.mp4" type="video/mp4">
-        <img src="assets/images/jaydaar_couple_amber_flame.jpg" alt="Jaydaar Couple Wearing Handcrafted Batik Collection" class="hero-img">
-      </video>
-    </div>
-    <div class="hero-gradient"></div>
-
-    <div class="container hero-bottom-content">
-      <div class="hero-left-title">
-        <span class="hero-collection-tag">Sri Lankan Artisanal Batik Atelier</span>
-        <h1 class="hero-main-heading">
-          Batik Reimagined. <br>
-          <span class="italic">a style that is timeless</span>
-        </h1>
-        <p class="hero-caption">
-          Handcrafted wax-resist apparel celebrating slow fashion and authentic island heritage. Specializing in synchronized couple matching ensembles, signature flame sarongs, and bespoke tailored pieces.
-        </p>
+  <div class="hero-scroll-track" id="heroTrack">
+    <section class="hero-editorial sticky-hero" id="hero">
+      <div class="hero-img-wrap">
+        <video class="hero-bg-video" autoplay muted loop playsinline webkit-playsinline preload="auto" fetchpriority="high" poster="assets/images/jaydaar_couple_amber_flame.jpg" id="heroBgVideo">
+          <source src="assets/videos/jaydaar_quiet_luxury_heritage.mp4" type="video/mp4">
+          <img src="assets/images/jaydaar_couple_amber_flame.jpg" alt="Jaydaar Couple Wearing Handcrafted Batik Collection" class="hero-img">
+        </video>
       </div>
-      <div class="hero-actions">
-        <div class="hero-btn-group">
-          <a href="https://verveo3.pixieset.com/jaydaarsarees/" target="_blank" rel="noopener noreferrer" class="btn-minimal-white">
-            Explore Collections
-          </a>
-          <a href="https://wa.me/94771234567?text=Hello%20Jaydaar!%20I%20would%20like%20to%20inquire%20about%20your%20batik%20collections." target="_blank" class="btn-minimal-ghost">
-            Inquire on WhatsApp
-          </a>
+      <div class="hero-gradient" id="heroGradient"></div>
+
+      <!-- Scroll Invitation Indicator at Initial Full Screen State -->
+      <div class="hero-scroll-cue" id="heroScrollCue" aria-hidden="true">
+        <span class="cue-label">Scroll to Discover</span>
+        <div class="cue-track">
+          <div class="cue-indicator"></div>
         </div>
       </div>
-    </div>
-  </section>
+
+      <!-- Minimal Floating Pure Cinema Toggle -->
+      <button type="button" class="hero-clean-toggle" id="heroCleanToggle" aria-label="Toggle pure video view" title="Hide/Show Text Overlay">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <span id="cleanToggleLabel">Pure Video</span>
+      </button>
+
+      <div class="container hero-bottom-content" id="heroBottomContent">
+        <div class="hero-left-title">
+          <span class="hero-collection-tag">Sri Lankan Artisanal Batik Atelier</span>
+          <h1 class="hero-main-heading">
+            Batik Reimagined. <br>
+            <span class="italic">a style that is timeless</span>
+          </h1>
+          <p class="hero-caption">
+            Handcrafted wax-resist apparel celebrating slow fashion. Signature couple matching ensembles, flame sarongs, and bespoke pieces.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <div class="hero-btn-group">
+            <a href="https://verveo3.pixieset.com/jaydaarsarees/" target="_blank" rel="noopener noreferrer" class="btn-minimal-white">
+              Explore Collections
+            </a>
+            <a href="https://wa.me/94771234567?text=Hello%20Jaydaar!%20I%20would%20like%20to%20inquire%20about%20your%20batik%20collections." target="_blank" class="btn-minimal-ghost">
+              Inquire on WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 
   <!-- ==========================================================================
        Cinema in Motion / Real Instagram Reels Showcase
@@ -714,7 +737,7 @@
   <div class="luxury-cursor-ring" id="cursorRing"><span class="cursor-text" id="cursorText"></span></div>
 
   <!-- Floating Atelier Concierge Widget -->
-  <aside class="floating-concierge" aria-label="Atelier Concierge">
+  <aside class="floating-concierge" id="floatingConcierge" aria-label="Atelier Concierge">
     <a href="https://wa.me/94771234567?text=Hello%20Jaydaar!%20I%20am%20exploring%20your%20archive%20and%20would%20like%20to%20consult%20an%20atelier%20stylist." target="_blank" class="concierge-trigger" id="conciergeTrigger" aria-label="Direct WhatsApp Concierge">
       <span class="concierge-pulse"></span>
       <span class="concierge-divider"></span>
@@ -724,6 +747,7 @@
   </aside>
 
   <!-- Scripts -->
+  <script src="js/lenis.min.js"></script>
   <script src="js/products.js" defer></script>
   <script src="js/app.js" defer></script>
 </body>

@@ -2,8 +2,11 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
-
 const PORT = 3000;
+
+process.on('uncaughtException', (err) => {
+  console.error('Server error handled safely:', err.message);
+});
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
@@ -35,25 +38,54 @@ const server = http.createServer((req, res) => {
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
     const total = stats.size;
 
-    // Support HTTP Range requests for video seeking & smooth streaming
+    // Support HTTP Range requests for video seeking & smooth streaming (Chrome, Safari, iOS, Edge)
     if (req.headers.range && (ext === '.mp4' || ext === '.webm')) {
       const range = req.headers.range;
-      const parts = range.replace(/bytes=/, "").split("-");
-      const partialstart = parts[0];
-      const partialend = parts[1];
+      const matches = range.match(/bytes=(\d*)-(\d*)/);
 
-      const start = parseInt(partialstart, 10);
-      const end = partialend ? parseInt(partialend, 10) : total - 1;
+      let start = 0;
+      let end = total - 1;
+
+      if (matches) {
+        if (matches[1] === "" && matches[2] !== "") {
+          // Suffix byte range: bytes=-500 (last 500 bytes)
+          start = Math.max(0, total - parseInt(matches[2], 10));
+        } else if (matches[1] !== "" && matches[2] === "") {
+          // Open-ended range: bytes=500- (from 500 to end)
+          start = parseInt(matches[1], 10);
+        } else if (matches[1] !== "" && matches[2] !== "") {
+          // Explicit range: bytes=500-999
+          start = parseInt(matches[1], 10);
+          end = Math.min(total - 1, parseInt(matches[2], 10));
+        }
+      }
+
+      if (isNaN(start) || isNaN(end) || start > end || start >= total) {
+        res.writeHead(416, {
+          'Content-Range': `bytes */${total}`,
+          'Accept-Ranges': 'bytes'
+        });
+        res.end();
+        return;
+      }
+
       const chunksize = (end - start) + 1;
-
       const file = fs.createReadStream(filePath, { start: start, end: end });
       res.writeHead(206, {
-        'Content-Range': 'bytes ' + start + '-' + end + '/' + total,
+        'Content-Range': `bytes ${start}-${end}/${total}`,
         'Accept-Ranges': 'bytes',
         'Content-Length': chunksize,
         'Content-Type': contentType,
+        'Cache-Control': 'public, max-age=3600'
       });
       file.pipe(res);
+      file.on('error', () => {
+        if (!res.headersSent) res.writeHead(500);
+        res.end();
+      });
+      req.on('close', () => {
+        file.destroy();
+      });
     } else {
       const acceptEncoding = req.headers['accept-encoding'] || '';
       const isText = (ext === '.html' || ext === '.css' || ext === '.js' || ext === '.json');

@@ -533,7 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reelsGrid.innerHTML = JAYDAAR_DATA.reels.map((reel, idx) => `
       <div class="reel-card" data-idx="${idx}">
         <div class="reel-live-badge"><span class="reel-live-dot"></span> LIVE MOTION</div>
-        <video class="reel-video" loop muted playsinline webkit-playsinline preload="auto" poster="${reel.poster}">
+        <video class="reel-video" loop muted playsinline webkit-playsinline preload="none" poster="${reel.poster}">
           <source src="${reel.video}" type="video/mp4">
         </video>
         <div class="reel-overlay">
@@ -567,7 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!socialPreviewGrid || !JAYDAAR_DATA.socialPosts) return;
     socialPreviewGrid.innerHTML = JAYDAAR_DATA.socialPosts.map(post => `
       <div class="social-tile" onclick="window.open('${post.url}', '_blank')">
-        <video class="social-video" loop muted playsinline webkit-playsinline preload="auto" poster="${post.poster}">
+        <video class="social-video" loop muted playsinline webkit-playsinline preload="none" poster="${post.poster}">
           <source src="${post.video}" type="video/mp4">
         </video>
         <div class="social-tile-overlay">
@@ -737,6 +737,7 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
   };
 
   // Universal Video Engine: Ensure EVERY video autoplays smoothly across all devices
+  // Universal Video Engine: High-performance on-demand viewport video streaming
   function safePlayVideo(vid) {
     if (!vid) return;
     vid.muted = true;
@@ -752,51 +753,48 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
   }
 
   function playAllVideos() {
-    const allVideos = document.querySelectorAll('video');
-    allVideos.forEach(vid => {
-      if (vid.classList.contains('preloader-bg-video')) return;
-      safePlayVideo(vid);
-    });
+    // Only start hero video on initial reveal - DO NOT choke network with off-screen videos
+    const heroVid = document.getElementById('heroBgVideo');
+    if (heroVid && window.scrollY <= window.innerHeight) {
+      safePlayVideo(heroVid);
+    }
   }
 
   function initSmartVideoPlayback() {
-    // 1. Play all videos immediately
-    playAllVideos();
+    const heroVid = document.getElementById('heroBgVideo');
 
-    // 2. Play video as soon as its metadata / first frame is ready
-    document.querySelectorAll('video').forEach(vid => {
-      ['loadeddata', 'canplay', 'loadedmetadata'].forEach(evt => {
-        vid.addEventListener(evt, () => {
-          if (!vid.classList.contains('preloader-bg-video')) {
-            safePlayVideo(vid);
-          }
-        }, { once: true });
-      });
-    });
+    // 1. Play ONLY hero video initially if in viewport
+    if (heroVid && window.scrollY <= window.innerHeight) {
+      safePlayVideo(heroVid);
+    }
 
-    // 3. Fallback gesture unlock for strict Safari/iOS & Android Chrome policies
+    // 2. Fallback gesture unlock for strict Safari/iOS policies (only for hero if at top)
     const unlockHandler = () => {
-      playAllVideos();
+      if (heroVid && heroVid.paused && window.scrollY <= window.innerHeight) {
+        safePlayVideo(heroVid);
+      }
     };
-    ['touchstart', 'touchend', 'scroll', 'click', 'pointerdown', 'keydown'].forEach(evt => {
+    ['touchstart', 'touchend', 'click', 'pointerdown'].forEach(evt => {
       window.addEventListener(evt, unlockHandler, { once: true, passive: true });
     });
 
-    // 4. Viewport Intersection: Play videos when in view, PAUSE when off-screen to free GPU
+    // 3. Viewport IntersectionObserver: Load & Play ONLY videos currently on screen!
+    // As soon as a video scrolls away, PAUSE it immediately to save 100% bandwidth & GPU.
     if ('IntersectionObserver' in window) {
       const videoObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           const vid = entry.target;
           if (entry.isIntersecting) {
+            // Only stream video when in view
             safePlayVideo(vid);
           } else {
-            // Keep hero playing, pause off-screen reels to keep GPU fresh
-            if (!vid.classList.contains('hero-bg-video') && !vid.classList.contains('preloader-bg-video')) {
+            // Immediately pause off-screen video to prevent network buffering competition
+            if (!vid.classList.contains('preloader-bg-video')) {
               vid.pause();
             }
           }
         });
-      }, { rootMargin: '160px 0px 160px 0px', threshold: 0.02 });
+      }, { rootMargin: '120px 0px 120px 0px', threshold: 0.05 });
 
       document.querySelectorAll('video').forEach(vid => {
         if (!vid.classList.contains('preloader-bg-video')) {
@@ -915,6 +913,9 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
     const FADE_DURATION = 800;      // 0.8s crossfade
 
     function rotateHeroVideo() {
+      // Don't waste network downloading hero videos when user is scrolled down
+      if (window.scrollY > window.innerHeight * 1.2) return;
+
       currentVideoIndex = (currentVideoIndex + 1) % heroVideos.length;
       const nextSrc = heroVideos[currentVideoIndex];
 

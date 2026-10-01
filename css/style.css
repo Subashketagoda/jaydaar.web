@@ -58,7 +58,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   font-size: 16px;
   background-color: var(--bg-primary);
   color: var(--text-primary);
@@ -736,6 +736,12 @@ button {
   stroke: #000000;
 }
 
+.hero-editorial.clean-view .hero-gradient,
+.hero-editorial.clean-view .hero-scroll-cue,
+.hero-editorial.clean-view .hero-bottom-content {
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .hero-editorial.clean-view .hero-gradient {
   opacity: 0.1 !important;
 }
@@ -762,8 +768,6 @@ button {
   object-fit: cover;
   object-position: center 20%;
   opacity: 1;
-  transition: transform 0.2s linear, opacity 0.2s linear;
-  will-change: transform, opacity;
 }
 
 .hero-gradient {
@@ -779,7 +783,6 @@ button {
   z-index: 2;
   pointer-events: none;
   opacity: var(--hero-gradient-opacity, 0.12);
-  transition: opacity 0.15s linear;
   will-change: opacity;
 }
 
@@ -796,7 +799,6 @@ button {
   opacity: var(--hero-text-opacity, 0);
   pointer-events: var(--hero-pointer-events, none);
   will-change: transform, opacity;
-  transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
 .hero-left-title {

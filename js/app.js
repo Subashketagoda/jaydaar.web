@@ -149,51 +149,56 @@ document.addEventListener('DOMContentLoaded', () => {
   const heroBgVideo = document.getElementById('heroBgVideo');
   const floatingConcierge = document.getElementById('floatingConcierge');
 
+  // Cached geometry to guarantee zero-layout-thrashing during scroll (rock-solid 60/120fps)
+  let cachedTrackHeight = 0;
+  let cachedViewportHeight = window.innerHeight;
+  let cachedScrollableDist = 0;
+
+  function refreshHeroGeometry() {
+    if (!heroTrack) return;
+    cachedTrackHeight = heroTrack.offsetHeight;
+    cachedViewportHeight = window.innerHeight;
+    cachedScrollableDist = Math.max(1, cachedTrackHeight - cachedViewportHeight);
+  }
+  refreshHeroGeometry();
+  window.addEventListener('resize', refreshHeroGeometry, { passive: true });
+
   function updateHeroScroll() {
     if (!heroTrack || !heroEditorial) return;
 
-    const rect = heroTrack.getBoundingClientRect();
-    const trackHeight = heroTrack.offsetHeight;
-    const viewportHeight = window.innerHeight;
-    const scrollableDistance = trackHeight - viewportHeight;
+    const scrollY = window.scrollY;
+    // Beyond hero section - skip computations completely
+    if (scrollY > cachedScrollableDist + 150) {
+      if (floatingConcierge && !floatingConcierge.classList.contains('visible')) {
+        floatingConcierge.classList.add('visible');
+      }
+      return;
+    }
 
-    if (scrollableDistance <= 0) return;
-
-    // Scrolled amount within track: 0 when at top
-    const scrolled = -rect.top;
-    const rawProgress = scrolled / scrollableDistance;
+    const rawProgress = scrollY / cachedScrollableDist;
     const progress = Math.max(0, Math.min(1, rawProgress));
 
     // Phase 1: As user scrolls from 0 to 0.45, hero text gracefully floats UP from below into view
     const textProgress = Math.max(0, Math.min(1, progress / 0.45));
-    // High-end cubic ease out
     const easedText = 1 - Math.pow(1 - textProgress, 3);
 
-    // Text translateY: from 80px (tucked below) to 0px (at rest)
-    const translateY = (1 - easedText) * 80;
-    // Text opacity: from 0 to 1
+    const translateY = (1 - easedText) * 70;
     const textOpacity = Math.max(0, Math.min(1, textProgress * 1.25));
-
-    // Bottom gradient opacity: from 0.08 (pure video clarity) to 0.88 (deep contrast for text)
     const gradientOpacity = 0.08 + (easedText * 0.80);
 
-    // Initial "Scroll to Discover" cue indicator fades out rapidly as soon as user starts scrolling (0 to 0.15)
-    const cueProgress = Math.max(0, Math.min(1, progress / 0.15));
+    // Initial cue indicator fades out rapidly (0 to 0.12)
+    const cueProgress = Math.max(0, Math.min(1, progress / 0.12));
     const cueOpacity = 1 - cueProgress;
-    const cueTranslateY = cueProgress * 20;
+    const cueTranslateY = cueProgress * 18;
 
-    // Phase 2: Gentle parallax on video / subtle dimming as the next section comes in (progress 0.70 to 1.0)
-    let videoScale = 1.0;
-    let videoDim = 1.0;
+    // Phase 2: Gentle parallax on video exit (0.70 to 1.0)
     let textParallax = 0;
     if (progress > 0.70) {
       const exitP = (progress - 0.70) / 0.30;
-      videoScale = 1.0 + (exitP * 0.03);
-      videoDim = 1.0 - (exitP * 0.25);
-      textParallax = -exitP * 35; // gentle upward drift as page slides over
+      textParallax = -exitP * 30;
     }
 
-    // Apply values via CSS custom properties on container
+    // Apply via CSS custom properties on container
     heroEditorial.style.setProperty('--hero-text-y', `${(translateY + textParallax).toFixed(1)}px`);
     heroEditorial.style.setProperty('--hero-text-opacity', textOpacity.toFixed(3));
     heroEditorial.style.setProperty('--hero-gradient-opacity', gradientOpacity.toFixed(3));
@@ -204,14 +209,9 @@ document.addEventListener('DOMContentLoaded', () => {
       heroScrollCue.style.setProperty('--cue-y', `${cueTranslateY.toFixed(1)}px`);
     }
 
-    if (heroBgVideo) {
-      heroBgVideo.style.transform = `scale(${videoScale.toFixed(3)})`;
-      heroBgVideo.style.opacity = videoDim.toFixed(3);
-    }
-
-    // Floating Concierge Widget: completely hidden on Hero, smoothly rises up on scroll
+    // Floating Concierge Widget
     if (floatingConcierge) {
-      if (window.scrollY > 280 || progress > 0.25) {
+      if (scrollY > 280 || progress > 0.25) {
         floatingConcierge.classList.add('visible');
       } else {
         floatingConcierge.classList.remove('visible');
@@ -221,7 +221,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initial call on load
   updateHeroScroll();
-  window.addEventListener('resize', updateHeroScroll, { passive: true });
 
   // ==========================================================================
   // Lenis Butter-Smooth Luxury Momentum Scrolling Engine
@@ -229,19 +228,15 @@ document.addEventListener('DOMContentLoaded', () => {
   let lenis = null;
   if (typeof Lenis !== 'undefined') {
     lenis = new Lenis({
-      duration: 1.25,
+      duration: 1.05,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential luxury ease-out
       direction: 'vertical',
       gestureDirection: 'vertical',
       smooth: true,
-      mouseMultiplier: 1.0,
+      mouseMultiplier: 0.95,
       smoothTouch: false,
-      touchMultiplier: 1.8,
+      touchMultiplier: 1.0, // 1:1 natural touch response
       infinite: false,
-    });
-
-    lenis.on('scroll', () => {
-      updateHeroScroll();
     });
 
     function raf(time) {
@@ -257,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (targetId && targetId !== '#') {
           if (targetId === '#hero') {
             e.preventDefault();
-            lenis.scrollTo(0, { duration: 1.2 });
+            lenis.scrollTo(0, { duration: 1.0 });
             return;
           }
           const targetEl = document.querySelector(targetId);
@@ -265,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             lenis.scrollTo(targetEl, {
               offset: -60,
-              duration: 1.2
+              duration: 1.0
             });
           }
         }
@@ -273,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 2. Navigation: Sticky Header & Active Section Spy (RAF Throttled for 60/120fps)
+  // 2. Navigation: Sticky Header & Active Section Spy (Zero Layout-Thrashing)
   const trackedSections = [
     { id: 'hero', el: document.getElementById('heroTrack') || document.getElementById('hero'), link: document.querySelector('.main-nav a[href="#hero"]') },
     { id: 'about', el: document.getElementById('about'), link: document.querySelector('.main-nav a[href="#about"]') },
@@ -284,6 +279,18 @@ document.addEventListener('DOMContentLoaded', () => {
     { id: 'whyJaydaar', el: document.getElementById('whyJaydaar'), link: document.querySelector('.main-nav a[href="#whyJaydaar"]') },
     { id: 'contact', el: document.getElementById('contact'), link: document.querySelector('.main-nav a[href="#contact"]') }
   ].filter(item => item.el && item.link);
+
+  let cachedSectionPositions = [];
+  function refreshSectionPositions() {
+    cachedSectionPositions = trackedSections.map(item => ({
+      id: item.id,
+      link: item.link,
+      top: item.el.offsetTop,
+      height: item.el.offsetHeight
+    }));
+  }
+  refreshSectionPositions();
+  window.addEventListener('resize', refreshSectionPositions, { passive: true });
 
   let scrollTicking = false;
 
@@ -300,10 +307,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrollPos = scrollY + 220;
     let currentActiveId = null;
 
-    for (let i = 0; i < trackedSections.length; i++) {
-      const { id, el } = trackedSections[i];
-      const top = el.offsetTop;
-      const height = el.offsetHeight;
+    for (let i = 0; i < cachedSectionPositions.length; i++) {
+      const { id, top, height } = cachedSectionPositions[i];
       if (scrollPos >= top && scrollPos < top + height) {
         currentActiveId = id;
         break;
@@ -311,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (currentActiveId) {
-      trackedSections.forEach(({ id, link }) => {
+      cachedSectionPositions.forEach(({ id, link }) => {
         if (id === currentActiveId) {
           if (!link.classList.contains('active')) link.classList.add('active');
         } else {
@@ -323,12 +328,18 @@ document.addEventListener('DOMContentLoaded', () => {
     scrollTicking = false;
   }
 
-  window.addEventListener('scroll', () => {
+  function triggerScrollTick() {
     if (!scrollTicking) {
       requestAnimationFrame(handleScrollTick);
       scrollTicking = true;
     }
-  }, { passive: true });
+  }
+
+  if (lenis) {
+    lenis.on('scroll', triggerScrollTick);
+  } else {
+    window.addEventListener('scroll', triggerScrollTick, { passive: true });
+  }
 
   // Mobile Menu Toggle
   if (mobileMenuToggle && mainNav) {

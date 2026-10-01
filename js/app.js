@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const scrollY = window.scrollY;
     // Beyond hero section - skip computations completely
-    if (scrollY > cachedScrollableDist + 150) {
+    if (scrollY > cachedScrollableDist + 100) {
       if (floatingConcierge && !floatingConcierge.classList.contains('visible')) {
         floatingConcierge.classList.add('visible');
       }
@@ -178,31 +178,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const rawProgress = scrollY / cachedScrollableDist;
     const progress = Math.max(0, Math.min(1, rawProgress));
 
-    // Phase 1: As user scrolls from 0 to 0.45, hero text gracefully floats UP from below into view
-    const textProgress = Math.max(0, Math.min(1, progress / 0.45));
+    // Phase 1: As user scrolls from 0 to 0.50, hero text gracefully floats UP from below into view
+    const textProgress = Math.max(0, Math.min(1, progress / 0.50));
     const easedText = 1 - Math.pow(1 - textProgress, 3);
 
-    const translateY = (1 - easedText) * 70;
-    const textOpacity = Math.max(0, Math.min(1, textProgress * 1.25));
-    const gradientOpacity = 0.08 + (easedText * 0.80);
+    const translateY = (1 - easedText) * 55;
+    const textOpacity = Math.max(0, Math.min(1, textProgress * 1.3));
+    const gradientOpacity = 0.08 + (easedText * 0.75);
 
-    // Initial cue indicator fades out rapidly (0 to 0.12)
-    const cueProgress = Math.max(0, Math.min(1, progress / 0.12));
+    // Initial cue indicator fades out rapidly (0 to 0.15)
+    const cueProgress = Math.max(0, Math.min(1, progress / 0.15));
     const cueOpacity = 1 - cueProgress;
-    const cueTranslateY = cueProgress * 18;
-
-    // Phase 2: Gentle parallax on video exit (0.70 to 1.0)
-    let textParallax = 0;
-    if (progress > 0.70) {
-      const exitP = (progress - 0.70) / 0.30;
-      textParallax = -exitP * 30;
-    }
+    const cueTranslateY = cueProgress * 16;
 
     // Apply via CSS custom properties on container
-    heroEditorial.style.setProperty('--hero-text-y', `${(translateY + textParallax).toFixed(1)}px`);
+    heroEditorial.style.setProperty('--hero-text-y', `${translateY.toFixed(1)}px`);
     heroEditorial.style.setProperty('--hero-text-opacity', textOpacity.toFixed(3));
     heroEditorial.style.setProperty('--hero-gradient-opacity', gradientOpacity.toFixed(3));
-    heroEditorial.style.setProperty('--hero-pointer-events', textProgress > 0.45 ? 'auto' : 'none');
+    heroEditorial.style.setProperty('--hero-pointer-events', textProgress > 0.4 ? 'auto' : 'none');
 
     if (heroScrollCue) {
       heroScrollCue.style.setProperty('--cue-opacity', cueOpacity.toFixed(3));
@@ -211,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Floating Concierge Widget
     if (floatingConcierge) {
-      if (scrollY > 280 || progress > 0.25) {
+      if (scrollY > 200 || progress > 0.25) {
         floatingConcierge.classList.add('visible');
       } else {
         floatingConcierge.classList.remove('visible');
@@ -223,19 +216,18 @@ document.addEventListener('DOMContentLoaded', () => {
   updateHeroScroll();
 
   // ==========================================================================
-  // Lenis Butter-Smooth Luxury Momentum Scrolling Engine
+  // Lenis Butter-Smooth Luxury Momentum Scrolling Engine (True Inertia Physics)
   // ==========================================================================
   let lenis = null;
   if (typeof Lenis !== 'undefined') {
     lenis = new Lenis({
-      duration: 1.05,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential luxury ease-out
-      direction: 'vertical',
-      gestureDirection: 'vertical',
-      smooth: true,
-      mouseMultiplier: 0.95,
-      smoothTouch: false,
-      touchMultiplier: 1.0, // 1:1 natural touch response
+      lerp: 0.085,             // Pure fluid inertia physics (no rigid duration)
+      wheelMultiplier: 0.92,   // Silky, luxurious weighted glide
+      touchMultiplier: 1.1,    // Natural 1:1 tactile responsiveness
+      smoothWheel: true,
+      syncTouch: true,         // Silky momentum on iOS/Android & precision trackpads
+      syncTouchLerp: 0.08,
+      touchInertiaMultiplier: 28,
       infinite: false,
     });
 

@@ -601,13 +601,13 @@ button {
    ========================================================================== */
 .hero-scroll-track {
   position: relative;
-  height: 200vh;
+  height: 135vh;
   background: #000000;
 }
 
 @media (max-width: 768px) {
   .hero-scroll-track {
-    height: 175vh;
+    height: 115vh;
   }
 }
 
@@ -795,7 +795,7 @@ button {
   align-items: flex-end;
   gap: 2rem;
   flex-wrap: wrap;
-  transform: translateY(var(--hero-text-y, 80px));
+  transform: translate3d(0, var(--hero-text-y, 60px), 0);
   opacity: var(--hero-text-opacity, 0);
   pointer-events: var(--hero-pointer-events, none);
   will-change: transform, opacity;
@@ -2804,8 +2804,7 @@ button {
 body.cursor-hover .luxury-cursor-ring {
   width: 58px;
   height: 58px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(4px);
+  background: rgba(255, 255, 255, 0.16);
   border-color: rgba(255, 255, 255, 0.85);
 }
 
@@ -2816,8 +2815,7 @@ body.cursor-hover .luxury-cursor-dot {
 body.cursor-explore .luxury-cursor-ring {
   width: 78px;
   height: 78px;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(8px);
+  background: rgba(12, 12, 12, 0.85);
   border-color: rgba(255, 255, 255, 0.9);
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
 }

@@ -7,8 +7,8 @@ const JAYDAAR_DATA = {
   brand: {
     name: "JAYDAAR",
     tagline: "A style that is timeless",
-    phone: "+94771234567",
-    whatsappNumber: "94771234567",
+    phone: "+94704994000",
+    whatsappNumber: "94704994000",
     instagram: "@jaydaar_",
     instagramUrl: "https://instagram.com/jaydaar_",
     email: "inquire@jaydaar.com",

@@ -220,7 +220,7 @@ button {
   width: clamp(280px, 45vw, 540px);
   height: auto;
   object-fit: contain;
-  filter: drop-shadow(0 0 24px rgba(255, 255, 255, 0.3));
+  filter: brightness(0) invert(1) drop-shadow(0 0 24px rgba(255, 255, 255, 0.4));
   animation: preloader-glow 2.5s ease-in-out infinite alternate;
 }
 
@@ -443,16 +443,16 @@ button {
 }
 
 .site-logo-img {
-  height: 36px;
+  height: 42px;
   width: auto;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.2));
+  filter: brightness(0) invert(1) drop-shadow(0 0 14px rgba(255, 255, 255, 0.25));
   transition: filter var(--transition), transform var(--transition);
 }
 
 .brand-logo:hover .site-logo-img {
-  filter: drop-shadow(0 0 24px rgba(255, 255, 255, 0.45));
+  filter: brightness(0) invert(1) drop-shadow(0 0 24px rgba(255, 255, 255, 0.6));
 }
 
 .main-nav {
@@ -1946,7 +1946,7 @@ button {
   object-fit: contain;
   margin-bottom: 0.75rem;
   display: block;
-  filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.2));
+  filter: brightness(0) invert(1) drop-shadow(0 0 16px rgba(255, 255, 255, 0.2));
   transition: opacity var(--transition);
 }
 
@@ -3143,6 +3143,892 @@ body.cursor-explore .cursor-text {
 
   .hero-editorial {
     padding-bottom: 2.25rem;
+  }
+}
+
+/* ==========================================================================
+   LIGHT MODE THEME (Dark/Light Toggle)
+   ========================================================================== */
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.theme-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: rotate(15deg);
+}
+
+.theme-toggle-btn .theme-icon-sun {
+  display: none;
+}
+
+.theme-toggle-btn .theme-icon-moon {
+  display: block;
+}
+
+/* Light Mode: Core Variables Override */
+body.light-mode {
+  --bg-primary: #FAFAFA;
+  --bg-secondary: #F5F5F5;
+  --bg-card: #FFFFFF;
+  --bg-elevated: #EEEEEE;
+  --text-white: #111111;
+  --text-primary: #1A1A1A;
+  --text-muted: #666666;
+  --text-subtle: #999999;
+  --border-line: 1px solid rgba(0, 0, 0, 0.10);
+  --border-light: 1px solid rgba(0, 0, 0, 0.05);
+  --border-active: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+body.light-mode {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+body.light-mode .theme-toggle-btn {
+  border-color: rgba(0, 0, 0, 0.15);
+  background: rgba(0, 0, 0, 0.04);
+  color: #1A1A1A;
+}
+
+body.light-mode .theme-toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+body.light-mode .theme-toggle-btn .theme-icon-sun {
+  display: block;
+}
+
+body.light-mode .theme-toggle-btn .theme-icon-moon {
+  display: none;
+}
+
+/* Light Mode: Header */
+body.light-mode .site-header {
+  background: rgba(250, 250, 250, 0.92);
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+body.light-mode .site-header.scrolled {
+  background: rgba(250, 250, 250, 0.96);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+}
+
+body.light-mode .site-logo-img {
+  filter: brightness(0) drop-shadow(0 0 2px rgba(0, 0, 0, 0.08));
+}
+
+body.light-mode .brand-logo:hover .site-logo-img {
+  filter: brightness(0) drop-shadow(0 0 8px rgba(0, 0, 0, 0.22));
+}
+
+body.light-mode .nav-link {
+  color: #333333;
+}
+
+body.light-mode .nav-link.active,
+body.light-mode .nav-link:hover {
+  color: #000000;
+}
+
+body.light-mode .btn-header-inquire {
+  background: #111111;
+  border-color: #111111;
+  color: #FFFFFF;
+}
+
+body.light-mode .btn-header-inquire:hover {
+  background: #333333;
+}
+
+/* Light Mode: Ticker */
+body.light-mode .ticker-bar {
+  background: #F0F0F0;
+  color: #888888;
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+/* Light Mode: About / Editorial Sections */
+body.light-mode .editorial-section,
+body.light-mode .why-section,
+body.light-mode .social-section,
+body.light-mode .reels-section {
+  background: var(--bg-primary);
+}
+
+body.light-mode .editorial-section-num {
+  color: var(--text-muted);
+}
+
+body.light-mode .editorial-section-title {
+  color: var(--text-primary);
+}
+
+body.light-mode .editorial-section-desc {
+  color: var(--text-muted);
+}
+
+/* Light Mode: Featured Section */
+body.light-mode .featured-section {
+  background: #F0F0F0;
+}
+
+body.light-mode .featured-eyebrow {
+  color: var(--text-muted);
+}
+
+body.light-mode .featured-title {
+  color: var(--text-primary);
+}
+
+body.light-mode .featured-desc {
+  color: var(--text-muted);
+}
+
+body.light-mode .featured-point-item {
+  color: var(--text-muted);
+}
+
+body.light-mode .btn-minimal-white {
+  background: #111111;
+  border-color: #111111;
+  color: #FFFFFF;
+}
+
+body.light-mode .btn-minimal-white:hover {
+  background: #333333;
+  border-color: #333333;
+}
+
+body.light-mode .btn-minimal-ghost {
+  border-color: rgba(0, 0, 0, 0.25);
+  color: #333333;
+}
+
+body.light-mode .btn-minimal-ghost:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* Light Mode: Cards */
+body.light-mode .editorial-prod-card {
+  background: var(--bg-card);
+}
+
+body.light-mode .prod-visual-box {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+body.light-mode .prod-category-tag,
+body.light-mode .prod-sizes-tag {
+  color: var(--text-muted);
+}
+
+body.light-mode .prod-item-name {
+  color: var(--text-primary);
+}
+
+body.light-mode .prod-item-desc {
+  color: var(--text-muted);
+}
+
+/* Light Mode: Why Jaydaar Cards */
+body.light-mode .why-card {
+  background: #FFFFFF;
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+body.light-mode .why-title {
+  color: var(--text-primary);
+}
+
+body.light-mode .why-desc {
+  color: var(--text-muted);
+}
+
+body.light-mode .why-icon-box {
+  border-color: rgba(0, 0, 0, 0.10);
+  color: #333333;
+}
+
+/* Light Mode: About */
+body.light-mode .about-lead-quote {
+  color: var(--text-primary);
+  border-left-color: rgba(0, 0, 0, 0.2);
+}
+
+body.light-mode .about-body-text {
+  color: var(--text-muted);
+}
+
+body.light-mode .about-badge-card {
+  background: #111111;
+  color: #FFFFFF;
+}
+
+body.light-mode .about-badge-card p {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+body.light-mode .metric-item h4 {
+  color: var(--text-primary);
+}
+
+body.light-mode .metric-item p {
+  color: var(--text-muted);
+}
+
+/* Light Mode: Contact */
+body.light-mode .contact-section {
+  background: #F0F0F0;
+}
+
+body.light-mode .contact-info-col h3 {
+  color: var(--text-primary);
+}
+
+body.light-mode .lead-text {
+  color: var(--text-muted);
+}
+
+body.light-mode .method-details h5 {
+  color: var(--text-primary);
+}
+
+body.light-mode .method-details a,
+body.light-mode .method-details span {
+  color: var(--text-muted);
+}
+
+body.light-mode .contact-form-wrap {
+  background: #FFFFFF;
+}
+
+body.light-mode .form-input,
+body.light-mode .form-select,
+body.light-mode .form-textarea {
+  background: #F8F8F8;
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #1A1A1A;
+}
+
+body.light-mode .form-label {
+  color: #666666;
+}
+
+body.light-mode .btn-form-submit {
+  background: #111111;
+  color: #FFFFFF;
+}
+
+/* Light Mode: Footer */
+body.light-mode .site-footer-min {
+  background: #111111;
+  color: #FFFFFF;
+}
+
+body.light-mode .site-footer-min .footer-link-min {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+body.light-mode .site-footer-min .footer-col-title {
+  color: #FFFFFF;
+}
+
+/* Light Mode: Modals */
+body.light-mode .modal-backdrop {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+body.light-mode .modal-editorial-container {
+  background: #FFFFFF;
+  color: #1A1A1A;
+}
+
+body.light-mode .modal-title-text {
+  color: #1A1A1A;
+}
+
+body.light-mode .modal-desc-body {
+  color: #666666;
+}
+
+body.light-mode .modal-specs-list li {
+  color: #666666;
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+/* Light Mode: Lightbox */
+body.light-mode .lightbox-modal {
+  background: rgba(0, 0, 0, 0.88);
+}
+
+/* Light Mode: Social */
+body.light-mode .social-handle {
+  color: var(--text-primary);
+}
+
+body.light-mode .social-sub {
+  color: var(--text-muted);
+}
+
+/* Light Mode: Floating Concierge */
+body.light-mode .concierge-trigger {
+  background: #FFFFFF;
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #1A1A1A;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+body.light-mode .concierge-trigger:hover {
+  background: #111111;
+  border-color: #111111;
+  color: #FFFFFF;
+}
+
+body.light-mode .concierge-label {
+  color: inherit;
+}
+
+body.light-mode .concierge-divider {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+/* Light Mode: Cursor */
+body.light-mode .luxury-cursor-dot {
+  background-color: #000000;
+}
+
+body.light-mode .luxury-cursor-ring {
+  border-color: rgba(0, 0, 0, 0.35);
+}
+
+body.light-mode.cursor-hover .luxury-cursor-ring {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.65);
+}
+
+body.light-mode.cursor-explore .luxury-cursor-ring {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 0, 0, 0.8);
+}
+
+body.light-mode.cursor-explore .cursor-text {
+  color: #000000;
+}
+
+/* Light Mode: Mobile Nav */
+body.light-mode .main-nav.active {
+  background: rgba(250, 250, 250, 0.98);
+}
+
+/* Light Mode: Scrollbar */
+body.light-mode::-webkit-scrollbar {
+  width: 8px;
+}
+
+body.light-mode::-webkit-scrollbar-track {
+  background: #F0F0F0;
+}
+
+body.light-mode::-webkit-scrollbar-thumb {
+  background: #CCCCCC;
+  border-radius: 4px;
+}
+
+/* Smooth Transition for All Theme Changes */
+body,
+body *:not(video):not(img):not(svg):not(canvas) {
+  transition-property: background-color, color, border-color, box-shadow;
+  transition-duration: 0.4s;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+
+/* ==========================================================================
+   HERO VIDEO TRANSITION OVERLAY
+   ========================================================================== */
+
+.hero-video-transition {
+  position: absolute;
+  inset: 0;
+  background: #000000;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-video-transition.fading {
+  opacity: 1;
+}
+
+
+/* ==========================================================================
+   LAZY LOAD FADE-IN ANIMATION
+   ========================================================================== */
+
+img[loading="lazy"] {
+  opacity: 0;
+  transition: opacity 0.6s ease-out;
+}
+
+img[loading="lazy"].loaded,
+img[loading="lazy"]:not([src=""]) {
+  opacity: 1;
+}
+
+/* Immediate display for non-lazy images */
+img:not([loading="lazy"]) {
+  opacity: 1;
+}
+
+
+/* ==========================================================================
+   COMPREHENSIVE MOBILE RESPONSIVE IMPROVEMENTS
+   ========================================================================== */
+
+/* ---------- 1024px Tablet Landscape ---------- */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 2rem;
+  }
+
+  .hero-main-heading {
+    font-size: 2.8rem;
+  }
+
+  .featured-grid {
+    gap: 2rem;
+  }
+
+  .about-editorial-grid {
+    gap: 2.5rem;
+  }
+
+  .contact-grid {
+    gap: 2rem;
+  }
+}
+
+/* ---------- 768px Tablet Portrait ---------- */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+
+  /* Hero improvements */
+  .hero-main-heading {
+    font-size: 2.2rem;
+    line-height: 1.15;
+  }
+
+  .hero-caption {
+    font-size: 0.88rem;
+    max-width: 90%;
+  }
+
+  .hero-btn-group {
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .hero-btn-group .btn-minimal-white,
+  .hero-btn-group .btn-minimal-ghost {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    padding: 0.95rem 1.5rem;
+    font-size: 0.78rem;
+  }
+
+  .hero-editorial.sticky-hero {
+    padding-bottom: 2.5rem;
+  }
+
+  /* About Section */
+  .about-editorial-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .about-visual-col {
+    order: -1;
+  }
+
+  /* Featured */
+  .featured-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .featured-visual-wrap {
+    aspect-ratio: 4/3;
+  }
+
+  .featured-title {
+    font-size: 1.8rem;
+  }
+
+  /* Contact */
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  /* Why Jaydaar */
+  .why-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  /* Section Titles */
+  .editorial-section-title {
+    font-size: 1.8rem;
+  }
+
+  /* Gallery */
+  .lookbook-masonry {
+    columns: 2;
+    gap: 0.75rem;
+  }
+
+  /* Social Grid */
+  .social-preview-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  /* Reels Grid */
+  .reels-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  /* Theme toggle on mobile */
+  .theme-toggle-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  /* Mobile nav CTA spacing */
+  .mobile-nav-cta {
+    margin-top: 1.5rem;
+    padding: 1rem 1.5rem;
+    font-size: 0.82rem;
+  }
+}
+
+/* ---------- 480px Mobile Large ---------- */
+@media (max-width: 480px) {
+  .container {
+    padding: 0 1.15rem;
+  }
+
+  /* Hero */
+  .hero-main-heading {
+    font-size: 1.75rem;
+    letter-spacing: -0.01em;
+  }
+
+  .hero-caption {
+    font-size: 0.82rem;
+    line-height: 1.55;
+    max-width: 100%;
+  }
+
+  .hero-collection-tag {
+    font-size: 0.6rem;
+  }
+
+  /* Section Spacing */
+  .editorial-section,
+  .featured-section,
+  .reels-section,
+  .why-section,
+  .social-section,
+  .contact-section {
+    padding: 2rem 0;
+  }
+
+  .editorial-section-title {
+    font-size: 1.5rem;
+  }
+
+  .editorial-section-num {
+    font-size: 0.6rem;
+  }
+
+  .editorial-header-row {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  /* Featured Section */
+  .featured-title {
+    font-size: 1.5rem;
+  }
+
+  .featured-desc {
+    font-size: 0.85rem;
+  }
+
+  .featured-point-item {
+    font-size: 0.82rem;
+  }
+
+  /* Why Grid */
+  .why-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .why-card {
+    padding: 1.5rem;
+  }
+
+  .why-title {
+    font-size: 1rem;
+  }
+
+  /* Gallery */
+  .lookbook-masonry {
+    columns: 1;
+  }
+
+  /* Social */
+  .social-preview-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  /* Reels */
+  .reels-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .reel-card {
+    aspect-ratio: 9/14;
+  }
+
+  /* Contact form improvements */
+  .form-input,
+  .form-select,
+  .form-textarea {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+    padding: 0.9rem 1rem;
+  }
+
+  .btn-form-submit {
+    width: 100%;
+    padding: 1rem;
+    font-size: 0.82rem;
+  }
+
+  /* Modal mobile improvements */
+  .modal-editorial-container {
+    width: 96vw;
+    max-height: 92vh;
+    margin: 4vh auto;
+  }
+
+  .modal-grid-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-title-text {
+    font-size: 1.4rem;
+  }
+
+  /* Size guide modal */
+  .size-guide-modal-box {
+    width: 96vw;
+    padding: 1.5rem;
+  }
+
+  /* About metrics */
+  .about-metrics-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .metric-item h4 {
+    font-size: 1.5rem;
+  }
+
+  /* Product cards */
+  .prod-item-name {
+    font-size: 1rem;
+  }
+
+  .prod-item-desc {
+    font-size: 0.78rem;
+  }
+
+  /* Touch-friendly tap targets */
+  .nav-link,
+  .tab-btn,
+  .size-btn-pill,
+  .footer-link-min {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+/* ---------- 375px Mobile Small (iPhone SE / Older Phones) ---------- */
+@media (max-width: 375px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .hero-main-heading {
+    font-size: 1.5rem;
+  }
+
+  .hero-caption {
+    font-size: 0.78rem;
+  }
+
+  .hero-btn-group .btn-minimal-white,
+  .hero-btn-group .btn-minimal-ghost {
+    padding: 0.85rem 1.25rem;
+    font-size: 0.72rem;
+  }
+
+  .editorial-section-title {
+    font-size: 1.3rem;
+  }
+
+  .featured-title {
+    font-size: 1.3rem;
+  }
+
+  .about-lead-quote {
+    font-size: 1rem;
+  }
+
+  .social-preview-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+  }
+
+  .footer-nav-columns {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .modal-editorial-container {
+    width: 100vw;
+    max-height: 100vh;
+    margin: 0;
+    border-radius: 0;
+  }
+}
+
+/* ---------- 320px Ultra-Small Screens ---------- */
+@media (max-width: 320px) {
+  .hero-main-heading {
+    font-size: 1.3rem;
+  }
+
+  .hero-caption {
+    font-size: 0.72rem;
+  }
+
+  .editorial-section-title {
+    font-size: 1.15rem;
+  }
+
+  .btn-header-inquire span:last-child {
+    display: none;
+  }
+
+  .about-metrics-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Landscape Mobile (Constrained Height) ---------- */
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero-editorial.sticky-hero {
+    min-height: 100vh;
+    padding-bottom: 1.5rem;
+  }
+
+  .hero-main-heading {
+    font-size: 1.6rem;
+  }
+
+  .hero-caption {
+    display: none;
+  }
+
+  .hero-scroll-cue {
+    display: none;
+  }
+
+  .preloader {
+    padding: 1rem;
+  }
+}
+
+/* ---------- Safe Area Insets (iPhone Notch / Dynamic Island) ---------- */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .site-footer-min {
+    padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+  }
+
+  .floating-concierge {
+    bottom: calc(1.25rem + env(safe-area-inset-bottom));
+    right: calc(1.25rem + env(safe-area-inset-right));
+  }
+
+  .hero-editorial.sticky-hero {
+    padding-top: calc(var(--header-height) + env(safe-area-inset-top));
+  }
+}
+
+/* ---------- Print Styles ---------- */
+@media print {
+  .preloader,
+  .ticker-bar,
+  .floating-concierge,
+  .luxury-cursor-dot,
+  .luxury-cursor-ring,
+  .hero-scroll-cue,
+  .mobile-menu-toggle,
+  .theme-toggle-btn,
+  video {
+    display: none !important;
+  }
+
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+
+  .site-header {
+    position: relative !important;
+    background: #FFFFFF !important;
   }
 }
 

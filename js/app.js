@@ -859,10 +859,189 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
     attachCursorHover();
   }
 
+  // ==========================================================================
+  // 10. Dark/Light Mode Toggle (with localStorage persistence)
+  // ==========================================================================
+  function initThemeToggle() {
+    const themeToggle = document.getElementById('themeToggle');
+    const metaThemeColor = document.getElementById('metaThemeColor');
+    if (!themeToggle) return;
+
+    // Restore saved preference
+    const savedTheme = localStorage.getItem('jaydaar-theme');
+    if (savedTheme === 'light') {
+      document.body.classList.add('light-mode');
+      if (metaThemeColor) metaThemeColor.content = '#FAFAFA';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const isLight = document.body.classList.toggle('light-mode');
+      localStorage.setItem('jaydaar-theme', isLight ? 'light' : 'dark');
+
+      // Update meta theme-color for mobile browser chrome
+      if (metaThemeColor) {
+        metaThemeColor.content = isLight ? '#FAFAFA' : '#000000';
+      }
+
+      // GA4 Analytics: Track theme switch
+      if (typeof gtag === 'function') {
+        gtag('event', 'theme_toggle', {
+          event_category: 'engagement',
+          event_label: isLight ? 'light' : 'dark'
+        });
+      }
+    });
+  }
+
+  // ==========================================================================
+  // 11. Hero Video Auto-Rotation Engine (Cinematic Crossfade)
+  // ==========================================================================
+  function initHeroVideoRotation() {
+    const heroVideo = document.getElementById('heroBgVideo');
+    const transitionOverlay = document.getElementById('heroVideoTransition');
+    if (!heroVideo || !transitionOverlay) return;
+
+    // Parse video list from data attribute
+    let heroVideos;
+    try {
+      heroVideos = JSON.parse(heroVideo.dataset.heroVideos || '[]');
+    } catch (e) {
+      return;
+    }
+    if (!heroVideos || heroVideos.length <= 1) return;
+
+    let currentVideoIndex = 0;
+    const ROTATION_INTERVAL = 8000; // 8 seconds per video
+    const FADE_DURATION = 800;      // 0.8s crossfade
+
+    function rotateHeroVideo() {
+      currentVideoIndex = (currentVideoIndex + 1) % heroVideos.length;
+      const nextSrc = heroVideos[currentVideoIndex];
+
+      // Phase 1: Fade to black
+      transitionOverlay.classList.add('fading');
+
+      setTimeout(() => {
+        // Phase 2: Swap source while hidden
+        const source = heroVideo.querySelector('source');
+        if (source) {
+          source.src = nextSrc;
+        } else {
+          heroVideo.src = nextSrc;
+        }
+        heroVideo.load();
+
+        // Phase 3: Play and fade back in
+        const playWhenReady = () => {
+          heroVideo.muted = true;
+          heroVideo.play().catch(() => {});
+          transitionOverlay.classList.remove('fading');
+        };
+
+        // Wait for enough data to start playback
+        heroVideo.addEventListener('canplay', playWhenReady, { once: true });
+
+        // Fallback in case canplay doesn't fire quickly
+        setTimeout(() => {
+          if (transitionOverlay.classList.contains('fading')) {
+            playWhenReady();
+          }
+        }, 1200);
+      }, FADE_DURATION);
+    }
+
+    // Start rotation cycle
+    setInterval(rotateHeroVideo, ROTATION_INTERVAL);
+  }
+
+  // ==========================================================================
+  // 12. Image Lazy-Load Fade-In Observer
+  // ==========================================================================
+  function initLazyLoadFadeIn() {
+    const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+    if (!lazyImages.length) return;
+
+    if ('IntersectionObserver' in window) {
+      const imgObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            // Mark as loaded when the image finishes loading
+            if (img.complete) {
+              img.classList.add('loaded');
+            } else {
+              img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
+              img.addEventListener('error', () => img.classList.add('loaded'), { once: true });
+            }
+            imgObserver.unobserve(img);
+          }
+        });
+      }, {
+        rootMargin: '200px 0px',
+        threshold: 0.01
+      });
+
+      lazyImages.forEach(img => imgObserver.observe(img));
+    } else {
+      // Fallback: just show all images
+      lazyImages.forEach(img => img.classList.add('loaded'));
+    }
+  }
+
+  // ==========================================================================
+  // 13. GA4 Analytics: Track Key User Interactions
+  // ==========================================================================
+  function initAnalyticsTracking() {
+    if (typeof gtag !== 'function') return;
+
+    // Track WhatsApp inquiries
+    document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
+      link.addEventListener('click', () => {
+        gtag('event', 'whatsapp_inquiry', {
+          event_category: 'conversion',
+          event_label: link.textContent.trim().substring(0, 50)
+        });
+      });
+    });
+
+    // Track Instagram link clicks
+    document.querySelectorAll('a[href*="instagram.com"]').forEach(link => {
+      link.addEventListener('click', () => {
+        gtag('event', 'social_click', {
+          event_category: 'engagement',
+          event_label: 'instagram'
+        });
+      });
+    });
+
+    // Track section visibility
+    const sectionElements = document.querySelectorAll('section[id]');
+    if ('IntersectionObserver' in window) {
+      const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            gtag('event', 'section_view', {
+              event_category: 'engagement',
+              event_label: entry.target.id
+            });
+            sectionObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.3 });
+
+      sectionElements.forEach(section => sectionObserver.observe(section));
+    }
+  }
+
   // Initial Boot
   renderGallery();
   renderReels();
   renderSocialMedia();
   initSmartVideoPlayback();
   initLuxuryCursor();
+  initThemeToggle();
+  initHeroVideoRotation();
+  initLazyLoadFadeIn();
+  initAnalyticsTracking();
 });
+

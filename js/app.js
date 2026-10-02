@@ -895,12 +895,20 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
   }
 
   // ==========================================================================
-  // 11. Hero Video Auto-Rotation Engine (Cinematic Crossfade)
+  // 11. Hero Video Auto-Rotation & Progressive HD Enhancement Engine
   // ==========================================================================
   function initHeroVideoRotation() {
     const heroVideo = document.getElementById('heroBgVideo');
     const transitionOverlay = document.getElementById('heroVideoTransition');
     if (!heroVideo || !transitionOverlay) return;
+
+    // HD video mapping for crystal-clear clarity
+    const HD_MAPPING = {
+      'assets/videos/jaydaar_quiet_luxury_heritage.mp4': 'assets/videos/jaydaar_quiet_luxury_heritage_hd.mp4',
+      'assets/videos/jaydaar_new_year_collection.mp4': 'assets/videos/jaydaar_new_year_collection_hd.mp4',
+      'assets/videos/jaydaar_kandyan_saree_bride.mp4': 'assets/videos/jaydaar_kandyan_saree_bride_hd.mp4',
+      'assets/videos/jaydaar_sunset_hues_flame.mp4': 'assets/videos/jaydaar_sunset_hues_flame_hd.mp4'
+    };
 
     // Parse video list from data attribute
     let heroVideos;
@@ -912,8 +920,97 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
     if (!heroVideos || heroVideos.length <= 1) return;
 
     let currentVideoIndex = 0;
+    let isHdUpgraded = false;
     const ROTATION_INTERVAL = 8000; // 8 seconds per video
     const FADE_DURATION = 800;      // 0.8s crossfade
+
+    // Check if network is constrained or Data-Saver is enabled
+    function isNetworkConstrained() {
+      const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      if (!conn) return false;
+      if (conn.saveData) return true;
+      if (conn.effectiveType === 'slow-2g' || conn.effectiveType === '2g') return true;
+      return false;
+    }
+
+    // Progressive HD Upgrade Engine:
+    // Starts with instant 0-delay low-res playback, then buffers and crossfades to crisp 720p HD
+    function scheduleProgressiveHdUpgrade() {
+      if (isHdUpgraded || isNetworkConstrained()) return;
+
+      const firstLowSrc = heroVideos[0];
+      const firstHdSrc = HD_MAPPING[firstLowSrc];
+      if (!firstHdSrc) return;
+
+      const hdPreloader = document.createElement('video');
+      hdPreloader.preload = 'auto';
+      hdPreloader.muted = true;
+      hdPreloader.playsInline = true;
+      hdPreloader.src = firstHdSrc;
+
+      const onHdReady = () => {
+        if (isHdUpgraded) return;
+        isHdUpgraded = true;
+
+        // Upgrade playlist array to HD versions
+        heroVideos = heroVideos.map(v => HD_MAPPING[v] || v);
+
+        // If user is still viewing the first video, smoothly crossfade to HD version
+        if (currentVideoIndex === 0 && window.scrollY <= window.innerHeight * 1.2) {
+          const currentPos = heroVideo.currentTime || 0;
+          transitionOverlay.classList.add('fading');
+
+          setTimeout(() => {
+            const source = heroVideo.querySelector('source');
+            if (source) {
+              source.src = firstHdSrc;
+            } else {
+              heroVideo.src = firstHdSrc;
+            }
+            heroVideo.load();
+            heroVideo.currentTime = currentPos;
+            heroVideo.muted = true;
+
+            const resumeHd = () => {
+              heroVideo.play().catch(() => {});
+              transitionOverlay.classList.remove('fading');
+            };
+
+            heroVideo.addEventListener('canplay', resumeHd, { once: true });
+            setTimeout(() => {
+              if (transitionOverlay.classList.contains('fading')) resumeHd();
+            }, 600);
+          }, FADE_DURATION / 2);
+        }
+      };
+
+      hdPreloader.addEventListener('canplaythrough', onHdReady, { once: true });
+      hdPreloader.addEventListener('canplay', () => {
+        setTimeout(onHdReady, 1000);
+      }, { once: true });
+
+      hdPreloader.load();
+    }
+
+    // Trigger progressive upgrade after initial load / playback starts
+    if (document.readyState === 'complete') {
+      setTimeout(scheduleProgressiveHdUpgrade, 800);
+    } else {
+      window.addEventListener('load', () => setTimeout(scheduleProgressiveHdUpgrade, 800), { once: true });
+    }
+
+    // Pre-buffer next video in rotation so rotation transition is instantaneous
+    function prebufferNextVideo() {
+      if (window.scrollY > window.innerHeight * 1.2) return;
+      const nextIdx = (currentVideoIndex + 1) % heroVideos.length;
+      const nextSrc = heroVideos[nextIdx];
+      const bufferEl = document.createElement('video');
+      bufferEl.preload = 'auto';
+      bufferEl.muted = true;
+      bufferEl.playsInline = true;
+      bufferEl.src = nextSrc;
+      bufferEl.load();
+    }
 
     function rotateHeroVideo() {
       // Don't waste network downloading hero videos when user is scrolled down
@@ -952,10 +1049,14 @@ Message / Vision: ${message || 'I would like to consult with your stylist.'}`;
           }
         }, 1200);
       }, FADE_DURATION);
+
+      // Pre-buffer the video after this one 4s in advance
+      setTimeout(prebufferNextVideo, 4000);
     }
 
-    // Start rotation cycle
+    // Start rotation cycle and initial pre-buffer
     setInterval(rotateHeroVideo, ROTATION_INTERVAL);
+    setTimeout(prebufferNextVideo, 4000);
   }
 
   // ==========================================================================

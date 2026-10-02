@@ -177,9 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // On mobile devices, hero content is naturally positioned - skip sticky math
-    if (window.innerWidth <= 768) return;
-
     // Beyond hero section - skip computations completely
     if (scrollY > cachedScrollableDist + 100) return;
 

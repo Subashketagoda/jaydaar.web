@@ -607,24 +607,7 @@ button {
 
 @media (max-width: 768px) {
   .hero-scroll-track {
-    height: auto;
-  }
-
-  .hero-editorial.sticky-hero {
-    position: relative;
-    height: 100vh;
-    height: 100dvh;
-    min-height: 100dvh;
-  }
-
-  .hero-bottom-content {
-    transform: none !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-  }
-
-  .hero-scroll-cue {
-    display: none !important;
+    height: 115vh;
   }
 }
 

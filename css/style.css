@@ -1789,7 +1789,8 @@ button {
   gap: 6rem;
 }
 
-.contact-info-col h3 {
+.contact-info-col h3,
+.contact-info-col h2 {
   font-family: var(--font-display);
   font-size: clamp(2rem, 3.5vw, 3rem);
   font-weight: 400;
@@ -1831,7 +1832,8 @@ button {
   flex-shrink: 0;
 }
 
-.method-details h5 {
+.method-details h5,
+.method-details h3 {
   font-size: 0.72rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -2633,7 +2635,8 @@ button {
     gap: 2.25rem;
   }
 
-  .contact-info-col h3 {
+  .contact-info-col h3,
+  .contact-info-col h2 {
     font-size: 2rem;
   }
 
@@ -3546,7 +3549,8 @@ body.light-mode .contact-section {
   background: #F0F0F0;
 }
 
-body.light-mode .contact-info-col h3 {
+body.light-mode .contact-info-col h3,
+body.light-mode .contact-info-col h2 {
   color: var(--text-primary);
 }
 
@@ -3554,7 +3558,8 @@ body.light-mode .lead-text {
   color: var(--text-muted);
 }
 
-body.light-mode .method-details h5 {
+body.light-mode .method-details h5,
+body.light-mode .method-details h3 {
   color: var(--text-primary);
 }
 

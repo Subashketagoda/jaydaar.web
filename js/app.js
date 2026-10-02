@@ -479,7 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!galleryMasonry) return;
     galleryMasonry.innerHTML = JAYDAAR_DATA.lookbook.map((item, idx) => `
       <div class="lookbook-tile" onclick="window.JaydaarApp.openLightbox(${idx})">
-        <img src="${item.image}" alt="${item.caption}" loading="lazy">
+        <img src="${item.image}" alt="${item.caption}" loading="lazy" decoding="async" width="818" height="1024">
         <div class="lookbook-tile-overlay">
           <p class="tile-caption">${item.caption}</p>
           <span class="tile-action-link">View High-Res &rarr;</span>
@@ -541,9 +541,9 @@ document.addEventListener('DOMContentLoaded', () => {
         </video>
         <div class="reel-overlay">
           <span class="reel-tag">${reel.tag}</span>
-          <h4 class="reel-title">${reel.title}</h4>
+          <h3 class="reel-title">${reel.title}</h3>
           <p class="reel-caption">${reel.caption}</p>
-          <a href="https://wa.me/${JAYDAAR_DATA.brand.whatsappNumber}?text=${encodeURIComponent('Hello Jaydaar! I watched your campaign reel for ' + reel.title + ' and would like to inquire about this piece.')}" target="_blank" class="reel-inquire-link">
+          <a href="https://wa.me/${JAYDAAR_DATA.brand.whatsappNumber}?text=${encodeURIComponent('Hello Jaydaar! I watched your campaign reel for ' + reel.title + ' and would like to inquire about this piece.')}" target="_blank" rel="noopener noreferrer" class="reel-inquire-link">
             Inquire Piece &rarr;
           </a>
         </div>
@@ -569,7 +569,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderSocialMedia() {
     if (!socialPreviewGrid || !JAYDAAR_DATA.socialPosts) return;
     socialPreviewGrid.innerHTML = JAYDAAR_DATA.socialPosts.map(post => `
-      <div class="social-tile" onclick="window.open('${post.url}', '_blank')">
+      <div class="social-tile" onclick="window.open('${post.url}', '_blank', 'noopener,noreferrer')">
         <video class="social-video" loop muted playsinline webkit-playsinline preload="none" poster="${post.poster}">
           <source src="${post.video}" type="video/mp4">
         </video>

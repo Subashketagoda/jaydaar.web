@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://subashketagoda.github.io/jaydaar.web/sitemap.xml
+Sitemap: https://jaydaar.online/sitemap.xml

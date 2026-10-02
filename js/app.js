@@ -163,17 +163,25 @@ document.addEventListener('DOMContentLoaded', () => {
   refreshHeroGeometry();
   window.addEventListener('resize', refreshHeroGeometry, { passive: true });
 
-  function updateHeroScroll() {
+  function updateHeroScroll(currentScrollY) {
     if (!heroTrack || !heroEditorial) return;
 
-    const scrollY = window.scrollY;
-    // Beyond hero section - skip computations completely
-    if (scrollY > cachedScrollableDist + 100) {
-      if (floatingConcierge && !floatingConcierge.classList.contains('visible')) {
-        floatingConcierge.classList.add('visible');
+    const scrollY = (typeof currentScrollY === 'number') ? currentScrollY : window.scrollY;
+
+    // Floating Concierge Widget
+    if (floatingConcierge) {
+      if (scrollY > 200) {
+        if (!floatingConcierge.classList.contains('visible')) floatingConcierge.classList.add('visible');
+      } else {
+        if (floatingConcierge.classList.contains('visible')) floatingConcierge.classList.remove('visible');
       }
-      return;
     }
+
+    // On mobile devices, hero content is naturally positioned - skip sticky math
+    if (window.innerWidth <= 768) return;
+
+    // Beyond hero section - skip computations completely
+    if (scrollY > cachedScrollableDist + 100) return;
 
     const rawProgress = scrollY / cachedScrollableDist;
     const progress = Math.max(0, Math.min(1, rawProgress));
@@ -201,15 +209,6 @@ document.addEventListener('DOMContentLoaded', () => {
       heroScrollCue.style.setProperty('--cue-opacity', cueOpacity.toFixed(3));
       heroScrollCue.style.setProperty('--cue-y', `${cueTranslateY.toFixed(1)}px`);
     }
-
-    // Floating Concierge Widget
-    if (floatingConcierge) {
-      if (scrollY > 200 || progress > 0.25) {
-        floatingConcierge.classList.add('visible');
-      } else {
-        floatingConcierge.classList.remove('visible');
-      }
-    }
   }
 
   // Initial call on load
@@ -221,13 +220,14 @@ document.addEventListener('DOMContentLoaded', () => {
   let lenis = null;
   if (typeof Lenis !== 'undefined') {
     lenis = new Lenis({
-      lerp: 0.085,             // Pure fluid inertia physics (no rigid duration)
-      wheelMultiplier: 0.92,   // Silky, luxurious weighted glide
-      touchMultiplier: 1.1,    // Natural 1:1 tactile responsiveness
+      duration: 1.1,           // Silky, luxurious fluid momentum glide
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential luxury ease-out
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
       smoothWheel: true,
-      syncTouch: true,         // Silky momentum on iOS/Android & precision trackpads
-      syncTouchLerp: 0.08,
-      touchInertiaMultiplier: 28,
+      syncTouch: false,        // CRITICAL: NEVER emulate touch in JS on mobile - preserves 120Hz native hardware momentum
+      wheelMultiplier: 1.0,    // Natural 1:1 responsive wheel feel
+      touchMultiplier: 1.0,
       infinite: false,
     });
 
@@ -286,10 +286,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let scrollTicking = false;
 
-  function handleScrollTick() {
-    updateHeroScroll();
+  function handleScrollTick(currentScrollY) {
+    const scrollY = (typeof currentScrollY === 'number') ? currentScrollY : window.scrollY;
+    updateHeroScroll(scrollY);
 
-    const scrollY = window.scrollY;
     if (scrollY > 40) {
       if (!siteHeader.classList.contains('scrolled')) siteHeader.classList.add('scrolled');
     } else {
@@ -322,13 +322,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function triggerScrollTick() {
     if (!scrollTicking) {
-      requestAnimationFrame(handleScrollTick);
+      requestAnimationFrame(() => handleScrollTick());
       scrollTicking = true;
     }
   }
 
   if (lenis) {
-    lenis.on('scroll', triggerScrollTick);
+    // Lenis is already running inside an rAF loop - update synchronously for ZERO frame delay
+    lenis.on('scroll', (e) => {
+      handleScrollTick(e.scroll);
+    });
+    // Native window scroll fallback for mobile touch
+    window.addEventListener('scroll', triggerScrollTick, { passive: true });
   } else {
     window.addEventListener('scroll', triggerScrollTick, { passive: true });
   }

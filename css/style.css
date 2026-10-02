@@ -607,7 +607,24 @@ button {
 
 @media (max-width: 768px) {
   .hero-scroll-track {
-    height: 115vh;
+    height: auto;
+  }
+
+  .hero-editorial.sticky-hero {
+    position: relative;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 100dvh;
+  }
+
+  .hero-bottom-content {
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .hero-scroll-cue {
+    display: none !important;
   }
 }
 
@@ -651,7 +668,6 @@ button {
   z-index: 4;
   pointer-events: none;
   will-change: opacity, transform;
-  transition: opacity 0.25s ease-out;
 }
 
 .hero-scroll-cue .cue-label {
